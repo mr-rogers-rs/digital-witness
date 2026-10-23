@@ -15,3 +15,8 @@ This notice does not replace the licenses of upstream components.
 
 Distribution revision 0.3 improves Serbian interface wording and removes
 organizer-specific instructions from individual-edition recovery messages.
+
+Distribution revision 0.4 simplifies individual setup, recommends the Android
+folder picker, offers battery settings before recording, and changes fresh-install
+defaults to evidence mode, playable uploads and ordinary network connections.
+Saved privacy choices and existing queued-file policies are retained.

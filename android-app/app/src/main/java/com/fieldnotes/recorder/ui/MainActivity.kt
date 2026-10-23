@@ -3,14 +3,10 @@ package com.fieldnotes.recorder.ui
 import android.Manifest
 import android.app.ActivityManager
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.PowerManager
-import android.provider.Settings
 import android.util.Log
 import android.view.WindowManager
 import android.widget.Button
@@ -36,7 +32,6 @@ import com.fieldnotes.recorder.capture.SimplifiedCaptureService
 import com.fieldnotes.recorder.capture.CaptureControls
 import com.fieldnotes.recorder.crypto.CryptoEngine
 import com.fieldnotes.recorder.upload.UploadQueue
-import com.fieldnotes.recorder.util.OemUtil
 import com.fieldnotes.recorder.util.PanicWipe
 import com.fieldnotes.recorder.util.Prefs
 
@@ -44,7 +39,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "DW-MainActivity"
-        private const val PREF_OEM_GUIDE_SHOWN = "oem_guide_shown"
     }
 
     private fun requiredPerms() = buildList {
@@ -437,7 +431,6 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 if (cameraPreview?.prepareRecording() == false) error("Preview camera did not close")
-                showOemGuidanceOnce()
                 ContextCompat.startForegroundService(this@MainActivity, Intent(this@MainActivity, SimplifiedCaptureService::class.java))
                 startRequestedAt = SystemClock.elapsedRealtime()
                 banner = null
@@ -453,23 +446,11 @@ class MainActivity : AppCompatActivity() {
                 render()
                 Toast.makeText(this@MainActivity, getString(R.string.fail_start_recording), Toast.LENGTH_LONG).show()
             }
-            try { requestBatteryExemption() } catch (e: Exception) { Log.w(TAG, "battery exemption", e) }
         }
     }
 
     private fun hasPerms(): Boolean = requiredPerms().all {
         ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun requestBatteryExemption() {
-        val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
-        if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-            try {
-                startActivity(Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
-                    data = Uri.parse("package:$packageName")
-                })
-            } catch (_: Exception) {}
-        }
     }
 
     private fun confirmPanic() {
@@ -500,20 +481,4 @@ class MainActivity : AppCompatActivity() {
         }.apply { isDaemon = true; name = "dw-panicwipe-ui" }.start()
     }
 
-    private fun showOemGuidanceOnce() {
-        val sp = getSharedPreferences("dw_oem", Context.MODE_PRIVATE)
-        if (sp.getBoolean(PREF_OEM_GUIDE_SHOWN, false)) return
-        val guidance = OemUtil.backgroundPermissionGuidance(this) ?: return
-        sp.edit().putBoolean(PREF_OEM_GUIDE_SHOWN, true).apply()
-        AlertDialog.Builder(this)
-            .setTitle(getString(R.string.oem_guide_title))
-            .setMessage(guidance + getString(R.string.oem_guide_suffix))
-            .setPositiveButton(getString(R.string.oem_guide_open)) { _, _ ->
-                if (!OemUtil.launchOemBatterySettings(this)) {
-                    try { startActivity(Intent(Settings.ACTION_SETTINGS)) } catch (_: Exception) {}
-                }
-            }
-            .setNegativeButton(getString(R.string.oem_guide_later), null)
-            .show()
-    }
 }

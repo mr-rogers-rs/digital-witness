@@ -149,7 +149,7 @@ object Prefs {
 
     /** Export confidentiality is independent of encrypted local storage. */
     fun exportMode(ctx: Context): String =
-        prefs(ctx).getString("export_mode", "unconfigured") ?: "unconfigured"
+        prefs(ctx).getString("export_mode", "plaintext") ?: "unconfigured"
 
     fun recipientPublicKey(ctx: Context): String =
         prefs(ctx).getString("recipient_public_key", "") ?: ""
@@ -931,29 +931,25 @@ object Prefs {
     /**
      * Require VPN or Tor to be active before allowing uploads.
      *
-     * Default is true: this app's threat model assumes ISP-level surveillance,
-     * so a user who hasn't explicitly opted out of network privacy should be
-     * protected by default. Users on trusted networks can disable in settings.
+     * New installations allow ordinary connections. A saved VPN/Tor requirement
+     * remains in effect until the user changes it in setup or Settings.
      */
     fun isSecureNetworkRequired(ctx: Context): Boolean =
-        prefs(ctx).getBoolean(KEY_SECURE_NETWORK, true)
+        prefs(ctx).getBoolean(KEY_SECURE_NETWORK, false)
 
     fun setSecureNetworkRequired(ctx: Context, required: Boolean) {
         prefs(ctx).edit().putBoolean(KEY_SECURE_NETWORK, required).apply()
     }
 
     /**
-     * Recording mode: "evidence" preserves full device/environment metadata for court use.
+     * Recording mode: "evidence" preserves device/environment metadata and signed proofs.
      * "anonymous" strips device fingerprint, network operator, locale — keeps only
      * sensor readings, battery, and hash chain for integrity.
      */
     fun recordingMode(ctx: Context): String {
-        // Fail CLOSED to the more private mode. An unset or corrupted value must
-        // never silently resolve to "evidence", which embeds the device
-        // fingerprint, network operator, and locale into the recording and its
-        // proof. Anonymity is the safe default for this threat model, so an
-        // unrecognized stored value falls back to "anonymous", not "evidence".
-        val initialMode = "anonymous"
+        // Evidence mode is the fresh-install default. Keep explicit choices;
+        // malformed stored values still fall back to the more private mode.
+        val initialMode = "evidence"
         val v = prefs(ctx).getString(KEY_RECORDING_MODE, initialMode) ?: "anonymous"
         return if (v in listOf("evidence", "anonymous")) v else "anonymous"
     }

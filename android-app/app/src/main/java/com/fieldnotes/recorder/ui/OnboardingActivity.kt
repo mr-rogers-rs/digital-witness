@@ -33,7 +33,7 @@ import com.fieldnotes.recorder.util.SessionLock
  * the whole flow shares one calm surface and back-stack entry:
  *
  *   0 Welcome · 1 How it works · 2 Set PIN · 3 Permissions ·
- *   4 Recording mode · 6 Backup destination and export confidentiality ·
+ *   5 Background recording · 6 Backup destination ·
  *   8 Network privacy · 9 Done (internal step identifiers)
  *
  * It is the true first-run entry point: [LockScreenActivity] redirects here
@@ -41,12 +41,9 @@ import com.fieldnotes.recorder.util.SessionLock
  * and marks the session unlocked, so finishing lands the user directly in
  * [MainActivity] without an immediate re-lock.
  *
- * The network step exists because the defaults are fail-closed but silent: a fresh
- * install has `isSecureNetworkRequired = true` and `isTorEnabled = false`, so
- * a user with no VPN completes setup, records, and never uploads anything —
- * the only feedback being a generic "needs attention" notification. Onboarding
- * previously just suggested "reviewing network privacy in Settings" on the
- * final screen without saying uploads would not work until they did.
+ * Ordinary connections, playable uploads and evidence mode are the defaults.
+ * Network routing stays explicit in setup; encryption and recording mode can
+ * be changed in advanced settings. Battery settings are offered before capture.
  */
 class OnboardingActivity : AppCompatActivity() {
 
@@ -55,7 +52,7 @@ class OnboardingActivity : AppCompatActivity() {
         "8888", "9999", "1234", "4321", "0123", "3210", "1152"
     )
 
-    private val steps = listOf(0, 1, 2, 3, 4, 6, 8, 9)
+    private val steps = listOf(0, 1, 2, 3, 5, 6, 8, 9)
     private var step = 0
     private lateinit var content: LinearLayout
 
@@ -111,7 +108,7 @@ class OnboardingActivity : AppCompatActivity() {
             1 -> stepHowItWorks()
             2 -> stepPin()
             3 -> stepPermissions()
-            4 -> stepMode()
+            5 -> stepBattery()
             6 -> stepBackup()
             8 -> stepNetwork()
             9 -> stepDone()
@@ -218,20 +215,29 @@ class OnboardingActivity : AppCompatActivity() {
         }
     }
 
-    private fun stepMode() {
-        content.addView(Ui.h1(this, getString(R.string.ob_mode_title)))
-        content.addView(bodyTop(getString(R.string.ob_mode_body)))
-        val current = Prefs.recordingMode(this)
-        content.addView(optionCard(
-            selected = current == "anonymous",
-            title = getString(R.string.ob_mode_anon_title),
-            desc = getString(R.string.ob_mode_anon_desc)
-        ) { Prefs.setRecordingMode(this, "anonymous"); render() })
-        content.addView(optionCard(
-            selected = current == "evidence",
-            title = getString(R.string.ob_mode_ev_title),
-            desc = getString(R.string.ob_mode_ev_desc)
-        ) { Prefs.setRecordingMode(this, "evidence"); render() })
+    private fun stepBattery() {
+        content.addView(Ui.h1(this, getString(R.string.battery_setup_title)))
+        content.addView(bodyTop(getString(R.string.battery_setup_body)))
+        val card = Ui.card(this)
+        card.addView(Ui.caption(this, getString(if (com.fieldnotes.recorder.util.OemUtil.isBatteryExempt(this))
+            R.string.battery_setup_allowed else R.string.battery_setup_restricted)))
+        card.addView(Ui.button(this, getString(R.string.battery_setup_open), Ui.Btn.SECONDARY).apply {
+            setOnClickListener {
+                if (!com.fieldnotes.recorder.util.OemUtil.launchBatteryExemptionSettings(this@OnboardingActivity))
+                    toast(getString(R.string.battery_setup_unavailable))
+            }
+        })
+        com.fieldnotes.recorder.util.OemUtil.backgroundPermissionGuidance(this)?.let { guidance ->
+            card.addView(Ui.caption(this, guidance))
+            card.addView(Ui.button(this, getString(R.string.oem_guide_open), Ui.Btn.GHOST).apply {
+                setOnClickListener {
+                    if (!com.fieldnotes.recorder.util.OemUtil.launchOemBatterySettings(this@OnboardingActivity))
+                        com.fieldnotes.recorder.util.OemUtil.launchBatteryExemptionSettings(this@OnboardingActivity)
+                }
+            })
+        }
+        content.addView(card)
+        content.addView(Ui.note(this, getString(R.string.battery_setup_note)))
         nav(next = getString(R.string.action_continue))
     }
 
@@ -248,7 +254,7 @@ class OnboardingActivity : AppCompatActivity() {
 
         content.addView(optionCard(
             selected = ncConfigured && Prefs.uploadMethod(this) == "cloud",
-            title = getString(if (ncConfigured) R.string.ob_backup_nc_configured else R.string.ob_backup_nc_recommended),
+            title = getString(if (ncConfigured) R.string.ob_backup_nc_configured else R.string.backup_nextcloud),
             desc = getString(if (ncConfigured) R.string.ob_backup_nc_desc_review else R.string.ob_backup_nc_desc_setup)
         ) {
             nextcloudSetup.launch(Intent(this, NextcloudSetupActivity::class.java)
@@ -262,9 +268,6 @@ class OnboardingActivity : AppCompatActivity() {
         ) { pickFolder.launch(null) })
 
         content.addView(Ui.note(this, getString(R.string.ob_backup_note)))
-
-        content.addView(Ui.title(this, getString(R.string.export_title)))
-        content.addView(uploadChoice(this) { render() })
 
         nav(next = getString(if (ncConfigured || safConfigured) R.string.action_continue else R.string.ob_skip))
     }
@@ -286,6 +289,16 @@ class OnboardingActivity : AppCompatActivity() {
         val secureRequired = Prefs.isSecureNetworkRequired(this)
 
         content.addView(optionCard(
+            selected = !secureRequired,
+            title = getString(R.string.ob_net_none_title),
+            desc = getString(R.string.ob_net_none_desc)
+        ) {
+            Prefs.setTorEnabled(this, false)
+            Prefs.setSecureNetworkRequired(this, false)
+            render()
+        })
+
+        content.addView(optionCard(
             selected = secureRequired && torEnabled,
             title = getString(R.string.ob_net_tor_title),
             desc = getString(R.string.ob_net_tor_desc)
@@ -304,16 +317,6 @@ class OnboardingActivity : AppCompatActivity() {
         ) {
             Prefs.setTorEnabled(this, false)
             Prefs.setSecureNetworkRequired(this, true)
-            render()
-        })
-
-        content.addView(optionCard(
-            selected = !secureRequired,
-            title = getString(R.string.ob_net_none_title),
-            desc = getString(R.string.ob_net_none_desc)
-        ) {
-            Prefs.setTorEnabled(this, false)
-            Prefs.setSecureNetworkRequired(this, false)
             render()
         })
 
@@ -369,7 +372,7 @@ class OnboardingActivity : AppCompatActivity() {
 
             val (text, ok) = when {
                 !secureRequired ->
-                    getString(R.string.ob_net_status_none) to false
+                    getString(R.string.ob_net_status_none) to true
                 torEnabled && torUp ->
                     getString(R.string.ob_net_status_tor_ok) to true
                 torEnabled ->
@@ -399,7 +402,7 @@ class OnboardingActivity : AppCompatActivity() {
         card.addView(Ui.divider(this))
         val dest = when {
             !Prefs.ncBaseUrl(this).isNullOrBlank() && Prefs.uploadMethod(this) == "cloud" -> getString(R.string.backup_nextcloud)
-            Prefs.cloudFolderUri(this) != null && Prefs.uploadMethod(this) == "saf" -> getString(R.string.ob_backup_saf)
+            Prefs.cloudFolderUri(this) != null && Prefs.uploadMethod(this) == "saf" -> getString(R.string.set_folder_configured)
             else -> getString(R.string.ob_dest_none)
         }
         card.addView(summaryRow(getString(R.string.ob_sum_backup), dest))
@@ -541,7 +544,7 @@ class OnboardingActivity : AppCompatActivity() {
     }
 
     /**
-     * Steps 3 (permissions) and 6 (network) show state the user changes OUTSIDE
+     * Permissions, battery and network steps show state the user changes OUTSIDE
      * this app — the system permission screen, Orbot, a VPN client — so they go
      * stale the moment the user leaves. Re-render just those two on return.
      * Deliberately not the others: step 2 holds a half-typed PIN that a blind
@@ -549,7 +552,7 @@ class OnboardingActivity : AppCompatActivity() {
      */
     override fun onResume() {
         super.onResume()
-        if (step == 3 || step == 7) render()
+        if (step in listOf(3, 5, 8)) render()
     }
 
     override fun onStop() {

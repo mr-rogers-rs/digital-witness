@@ -229,7 +229,7 @@ An app password is separate from your login password and can be revoked individu
     <string name="ob_get_started">Get started</string>
 
     <string name="ob_how_title">How it works</string>
-    <string name="ob_how_body">During recording the app processes short segments. Configure the destination, upload encryption and network before sending files.</string>
+    <string name="ob_how_body">During recording the app processes short segments. Choose a backup folder and connection before sending files.</string>
     <string name="ob_how_1_t">1 · Record</string>
     <string name="ob_how_1_d">Video and audio are captured in short segments.</string>
     <string name="ob_how_2_t">2 · Seal</string>
@@ -268,25 +268,25 @@ An app password is separate from your login password and can be revoked individu
     <string name="ob_mode_body">This controls what metadata goes into your recordings. You can change it later.</string>
     <!-- SAFETY: the anonymity-vs-evidence tradeoff. Getting this wrong in
          translation could lead someone to pick the identifying mode. -->
-    <string name="ob_mode_anon_title">Anonymous  ·  recommended</string>
+    <string name="ob_mode_anon_title">Anonymous mode</string>
     <string name="ob_mode_anon_desc">Reduces device, network and language metadata and disables GPS. Footage and remaining metadata may still identify you. An unsigned hash chain is recomputable.</string>
     <string name="ob_mode_ev_title">Evidence</string>
     <string name="ob_mode_ev_desc">Keeps additional device and environment metadata and signs proof records. This may identify the device and, if GPS is enabled, the location. It does not guarantee acceptance as legal evidence.</string>
 
     <string name="ob_backup_title">Where recordings go</string>
-    <string name="ob_backup_body">Choose where copies are sent. On this screen, also choose ordinary files or encryption for a recipient.</string>
+    <string name="ob_backup_body">Choose where to save copies. Folder selection is recommended; Nextcloud is another option.</string>
     <string name="ob_backup_nc_configured">Nextcloud  ·  configured ✓</string>
-    <string name="ob_backup_nc_recommended">Nextcloud  ·  recommended</string>
+    <string name="ob_backup_nc_recommended">Nextcloud</string>
     <string name="ob_backup_nc_desc_review">Upload to your chosen Nextcloud server over HTTPS. Tap to review the connection.</string>
     <string name="ob_backup_nc_desc_setup">Connect a Nextcloud server with guided setup and an HTTPS connection test.</string>
-    <string name="ob_backup_saf_chosen">Device folder  ·  chosen ✓</string>
-    <string name="ob_backup_saf">Device folder</string>
-    <string name="ob_backup_saf_desc">Select a folder with the system file picker. A cloud app is usable here only if it exposes a writable folder.</string>
-    <string name="ob_backup_note">You can skip this and configure it later in Settings. Pending recordings remain encrypted on the device, subject to available storage.</string>
+    <string name="ob_backup_saf_chosen">Folder selected · tap to change</string>
+    <string name="ob_backup_saf">Choose folder · recommended</string>
+    <string name="ob_backup_saf_desc">In the file picker, tap the menu at the top left (☰). If Google Drive, Dropbox or another cloud app is installed and signed in, choose it from the side menu, then select a folder. Only services that support folder access appear here. You can also choose a folder on this phone.</string>
+    <string name="ob_backup_note">Copies are uploaded as ordinary, playable files by default. Recipient encryption and recording mode are in Settings → Advanced settings. You can choose a folder later; pending files use space on this phone.</string>
     <string name="ob_skip">Skip for now</string>
 
     <string name="ob_net_title">How uploads travel</string>
-    <string name="ob_net_body">Network routing and file encryption are separate choices. The connection affects what the network operator and storage provider can see.</string>
+    <string name="ob_net_body">By default, uploads use any available Wi-Fi or mobile connection. Choose VPN or Tor below if you need that requirement.</string>
     <string name="ob_net_right_now">Right now</string>
     <string name="ob_net_checking">Checking…</string>
     <!-- SAFETY: these four describe what each network choice does and does not
@@ -295,7 +295,7 @@ An app password is separate from your login password and can be revoked individu
     <string name="ob_net_tor_desc">Direct cloud requests use the Orbot proxy and wait if it is unavailable. This does not route browser authorization or another app\'s SAF cloud sync. Tor is slower and requires Orbot.</string>
     <string name="ob_net_vpn_title">VPN  ·  requires one to be running</string>
     <string name="ob_net_vpn_desc">Uploads wait unless Android reports an active VPN. You configure the VPN yourself; check that it covers this app. VPN detection alone does not verify its route or trustworthiness.</string>
-    <string name="ob_net_none_title">No requirement</string>
+    <string name="ob_net_none_title">Any available connection · default</string>
     <string name="ob_net_none_desc">Uploads go over whatever connection you have. Your network operator sees when you upload and to where; your storage provider sees your real IP address.</string>
     <string name="ob_net_note">Pending files remain in the encrypted local queue while waiting for the required connection. Available storage is limited: check the queue and test delivery before use.</string>
 
@@ -365,7 +365,7 @@ An app password is separate from your login password and can be revoked individu
     <string name="set_segment_len_hint">default 10</string>
 
     <string name="set_backup">Backup &amp; upload</string>
-    <string name="set_method_saf">Choose a folder on this device (SAF)</string>
+    <string name="set_method_saf">Choose folder · phone or supported cloud service</string>
     <string name="set_method_cloud">Upload directly to cloud</string>
     <string name="set_choose_folder">Choose folder</string>
     <string name="set_folder_configured">Folder configured ✓</string>
@@ -468,7 +468,7 @@ An app password is separate from your login password and can be revoked individu
     <string name="export_plaintext">Upload unencrypted, playable footage</string>
     <string name="export_explanation">Unencrypted uploads let the storage provider and account holders read footage and proof metadata. HTTPS/Tor transport and local queue encryption remain independent. Encrypted uploads require the recipient’s private key to open.</string>
     <string name="export_key_hint">Recipient RSA public key (PEM). Keep the private key off this phone.</string>
-    <string name="export_existing_policy">Queued items keep their selected encryption and destination. Unconfigured items wait for your choice. External cloud folders do not inherit this app’s Tor routing and are blocked while secure networking is required; use a direct cloud provider instead.</string>
+    <string name="export_existing_policy">Queued files keep their saved encryption choice and destination. Files without a saved choice still wait for configuration. Tor settings here do not route the traffic of separate folder-provider apps.</string>
     <string name="export_invalid_key">Enter a valid RSA public key (2048–8192 bits), or choose unencrypted uploads.</string>
     <string name="folder_access_failed">Cannot retain access to this folder. Choose a writable folder.</string>
     <string name="settings_recording_active">Stop recording before changing settings.</string>
@@ -743,4 +743,12 @@ An app password is separate from your login password and can be revoked individu
     <string name="adaptive_bitrate_live">Automatic video bitrate: %1$d kb/s</string>
     <string name="adaptive_bitrate_unavailable">Automatic bitrate is unavailable on this phone; recording continues at the configured rate.</string>
     <string name="capture_lock_phone">Recording has started. You can lock the phone with its side button.</string>
+    <string name="settings_advanced">Advanced settings</string>
+    <string name="battery_setup_title">Recording with the screen locked</string>
+    <string name="battery_setup_body">Allow background operation so battery saving is less likely to stop recording. In the phone settings, allow the request or choose Unrestricted / No restrictions for this app.</string>
+    <string name="battery_setup_allowed">Android battery optimization is disabled for this app. Manufacturer restrictions can still apply.</string>
+    <string name="battery_setup_restricted">Android battery optimization is still enabled for this app.</string>
+    <string name="battery_setup_open">Set up background operation</string>
+    <string name="battery_setup_unavailable">Open the phone settings, find this app, then review its battery and background options.</string>
+    <string name="battery_setup_note">Return here after changing the settings. You can continue without changing them, but test recording with the screen locked before relying on it. These options are also available in Settings.</string>
 </resources>

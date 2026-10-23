@@ -12,6 +12,24 @@ import android.os.Build
  */
 object OemUtil {
 
+    fun isBatteryExempt(ctx: Context): Boolean =
+        (ctx.getSystemService(Context.POWER_SERVICE) as android.os.PowerManager)
+            .isIgnoringBatteryOptimizations(ctx.packageName)
+
+    /** Invoked only by a setup/settings button, never while starting capture. */
+    fun launchBatteryExemptionSettings(ctx: Context): Boolean {
+        val actions = if (isBatteryExempt(ctx)) listOf(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+            else listOf(android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        for (action in actions) {
+            try {
+                ctx.startActivity(Intent(action, android.net.Uri.parse("package:${ctx.packageName}")))
+                return true
+            } catch (_: Exception) { }
+        }
+        return false
+    }
+
     enum class Oem { XIAOMI, SAMSUNG, HUAWEI, OPPO, OTHER }
 
     fun detectOem(): Oem {

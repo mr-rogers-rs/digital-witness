@@ -42,6 +42,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private var gpsCheckbox: CheckBox? = null
     private var refreshCameraSummary: (() -> Unit)? = null
+    private var refreshBatteryStatus: (() -> Unit)? = null
     private var refreshElectionConnection: (() -> Unit)? = null
 
     private val requestLocationPerm = registerForActivityResult(
@@ -92,11 +93,11 @@ class SettingsActivity : AppCompatActivity() {
         root.addView(languageOptions)
 
         // Helper: a titled card added to the root, returning it for content.
-        fun section(title: String): LinearLayout {
+        fun section(title: String, parent: LinearLayout = root): LinearLayout {
             val c = Ui.card(this)
             c.addView(Ui.title(this, title))
             c.addView(Ui.spacer(this, 4))
-            root.addView(c)
+            parent.addView(c)
             return c
         }
         fun label(text: String): TextView = Ui.caption(this, text).apply {
@@ -104,12 +105,27 @@ class SettingsActivity : AppCompatActivity() {
         }
         fun number(field: EditText): EditText = field.apply { inputType = InputType.TYPE_CLASS_NUMBER }
 
-        val exportCard = section(getString(R.string.export_title))
+        fun details(parent: LinearLayout, title: String): LinearLayout {
+            val body = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; visibility = View.GONE }
+            parent.addView(Ui.button(this, title, Ui.Btn.SECONDARY).apply {
+                setOnClickListener {
+                    body.visibility = if (body.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                    text = if (body.visibility == View.VISIBLE) getString(R.string.settings_hide_details, title) else title
+                }
+            })
+            parent.addView(body)
+            return body
+        }
+        // Attach this card after the everyday settings. Hidden values still keep
+        // their saved state and are validated by the same Save handler.
+        val advancedCard = Ui.card(this)
+        val advancedBody = details(advancedCard, getString(R.string.settings_advanced))
+        val exportCard = section(getString(R.string.export_title), advancedBody)
         val exportGroup = RadioGroup(this)
         val exportEncrypted = Ui.radio(this, getString(R.string.export_encrypted))
         val exportPlain = Ui.radio(this, getString(R.string.export_plaintext))
-        exportGroup.addView(exportEncrypted)
         exportGroup.addView(exportPlain)
+        exportGroup.addView(exportEncrypted)
         exportCard.addView(exportGroup)
         when (Prefs.exportMode(this)) {
             "encrypted" -> exportGroup.check(exportEncrypted.id)
@@ -131,17 +147,6 @@ class SettingsActivity : AppCompatActivity() {
         // Recording choices first; camera implementation details stay collapsed.
         val qualityCard = section(getString(R.string.set_quality))
         val cameraCard = section(getString(R.string.camera_view_title))
-        fun details(parent: LinearLayout, title: String): LinearLayout {
-            val body = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; visibility = View.GONE }
-            parent.addView(Ui.button(this, title, Ui.Btn.SECONDARY).apply {
-                setOnClickListener {
-                    body.visibility = if (body.visibility == View.VISIBLE) View.GONE else View.VISIBLE
-                    text = if (body.visibility == View.VISIBLE) getString(R.string.settings_hide_details, title) else title
-                }
-            })
-            parent.addView(body)
-            return body
-        }
         val backendCard = details(cameraCard, getString(R.string.camera_backend_title))
         val backendGroup = RadioGroup(this)
         val camera2 = Ui.radio(this, getString(R.string.camera_backend_current))
@@ -203,6 +208,7 @@ class SettingsActivity : AppCompatActivity() {
         }
         backendGroup.setOnCheckedChangeListener { _, _ -> refreshCameraSummary?.invoke() }
         refreshCameraSummary?.invoke()
+        refreshBatteryStatus?.invoke()
         val bitrateChoice = BitrateChoice(this).also { qualityCard.addView(it) }
         val adaptiveBitrate = CheckBox(this).apply {
             text = getString(R.string.adaptive_bitrate_setting)
@@ -244,6 +250,7 @@ class SettingsActivity : AppCompatActivity() {
         val safStatus = Ui.caption(this, getString(if (Prefs.cloudFolderUri(this) != null) R.string.set_folder_configured else R.string.set_folder_none))
         safLayout.addView(chooseCloud)
         safLayout.addView(safStatus)
+        safLayout.addView(Ui.caption(this, getString(R.string.ob_backup_saf_desc)))
         uploadCard.addView(safLayout)
 
         // Cloud provider settings
@@ -467,7 +474,7 @@ class SettingsActivity : AppCompatActivity() {
 
 
         // === Recording Mode ===
-        val modeCard = section(getString(R.string.set_mode))
+        val modeCard = section(getString(R.string.set_mode), advancedBody)
         val modeGroup = RadioGroup(this)
         val modeEvidence = Ui.radio(this, getString(R.string.set_mode_evidence))
         val modeAnonymous = Ui.radio(this, getString(R.string.set_mode_anonymous))
@@ -481,7 +488,7 @@ class SettingsActivity : AppCompatActivity() {
         modeCard.addView(Ui.caption(this, getString(R.string.set_mode_explain)))
 
         // === Location ===
-        val locationCard = section(getString(R.string.set_location))
+        val locationCard = section(getString(R.string.set_location), advancedBody)
         val gpsToggle = Ui.checkbox(this, getString(R.string.set_gps_toggle), Prefs.isGpsEnabled(this)).also { locationCard.addView(it) }
         gpsCheckbox = gpsToggle
         gpsToggle.setOnCheckedChangeListener { _, isChecked ->
@@ -558,6 +565,33 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
+        val batteryCard = section(getString(R.string.battery_setup_title))
+        batteryCard.addView(Ui.caption(this, getString(R.string.battery_setup_body)))
+        val batteryStatus = Ui.caption(this, getString(if (com.fieldnotes.recorder.util.OemUtil.isBatteryExempt(this))
+            R.string.battery_setup_allowed else R.string.battery_setup_restricted))
+        batteryCard.addView(batteryStatus)
+        refreshBatteryStatus = {
+            batteryStatus.setText(if (com.fieldnotes.recorder.util.OemUtil.isBatteryExempt(this))
+                R.string.battery_setup_allowed else R.string.battery_setup_restricted)
+        }
+        batteryCard.addView(Ui.button(this, getString(R.string.battery_setup_open), Ui.Btn.SECONDARY).apply {
+            setOnClickListener {
+                if (!com.fieldnotes.recorder.util.OemUtil.launchBatteryExemptionSettings(this@SettingsActivity))
+                    Toast.makeText(this@SettingsActivity, R.string.battery_setup_unavailable, Toast.LENGTH_LONG).show()
+            }
+        })
+        com.fieldnotes.recorder.util.OemUtil.backgroundPermissionGuidance(this)?.let { guidance ->
+            batteryCard.addView(Ui.caption(this, guidance))
+            batteryCard.addView(Ui.button(this, getString(R.string.oem_guide_open), Ui.Btn.GHOST).apply {
+                setOnClickListener {
+                    if (!com.fieldnotes.recorder.util.OemUtil.launchOemBatterySettings(this@SettingsActivity))
+                        com.fieldnotes.recorder.util.OemUtil.launchBatteryExemptionSettings(this@SettingsActivity)
+                }
+            })
+        }
+
+        root.addView(advancedCard)
+
         // === Save ===
 
         root.addView(Ui.spacer(this, 8))
@@ -578,6 +612,7 @@ class SettingsActivity : AppCompatActivity() {
                 else -> "unconfigured"
             }
             if (exportMode == "unconfigured") {
+                advancedBody.visibility = View.VISIBLE
                 Toast.makeText(this, getString(R.string.upload_block_choice), Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
@@ -585,6 +620,7 @@ class SettingsActivity : AppCompatActivity() {
                 try {
                     com.fieldnotes.recorder.crypto.RecipientEncryption.parsePublicKey(recipientKey.text.toString())
                 } catch (e: Exception) {
+                    advancedBody.visibility = View.VISIBLE
                     Toast.makeText(this, getString(R.string.export_invalid_key), Toast.LENGTH_LONG).show()
                     return@setOnClickListener
                 }
@@ -824,6 +860,7 @@ class SettingsActivity : AppCompatActivity() {
         if (enforceSessionLock()) return
         refreshElectionConnection?.invoke()
         refreshCameraSummary?.invoke()
+        refreshBatteryStatus?.invoke()
     }
 
     override fun onStop() {

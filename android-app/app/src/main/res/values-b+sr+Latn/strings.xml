@@ -175,7 +175,7 @@
     <string name="ob_get_started">Započni podešavanje</string>
 
     <string name="ob_how_title">Kako aplikacija radi</string>
-    <string name="ob_how_body">Tokom snimanja aplikacija obrađuje kratke segmente. Za slanje prvo podesite odredište, šifrovanje i mrežnu vezu.</string>
+    <string name="ob_how_body">Tokom snimanja aplikacija obrađuje kratke segmente. Pre slanja izaberite folder za kopije i način povezivanja.</string>
     <string name="ob_how_1_t">1 · Snimanje</string>
     <string name="ob_how_1_d">Slika i zvuk čuvaju se u kratkim segmentima.</string>
     <string name="ob_how_2_t">2 · Provera snimka</string>
@@ -214,25 +214,25 @@
     <string name="ob_mode_body">Ovaj izbor određuje koji dodatni podaci se čuvaju uz snimak. Možete ga promeniti kasnije.</string>
     <!-- SAFETY: izbor između anonimnosti i dokazne snage. Pogrešan prevod ovde
          može navesti nekoga da izabere režim koji ga identifikuje. -->
-    <string name="ob_mode_anon_title">Anonimni režim  ·  preporučeno</string>
+    <string name="ob_mode_anon_title">Anonimni režim</string>
     <string name="ob_mode_anon_desc">Smanjuje količinu podataka o uređaju, mreži i jeziku i isključuje GPS. Sadržaj snimka i preostali metapodaci ipak mogu da vas identifikuju. Nepotpisani heš lanac može ponovo da se izračuna.</string>
     <string name="ob_mode_ev_title">Režim za dokaze</string>
     <string name="ob_mode_ev_desc">Čuva dodatne podatke o uređaju i okruženju i potpisuje zapise za proveru. Ti podaci mogu da identifikuju uređaj, a uz uključen GPS i lokaciju. To ne garantuje prihvatanje snimka kao dokaza na sudu.</string>
 
     <string name="ob_backup_title">Gde se čuvaju kopije snimaka</string>
-    <string name="ob_backup_body">Izaberite gde želite da šaljete kopije. Na ovom ekranu birate i slanje običnih datoteka ili šifrovanje za primaoca.</string>
+    <string name="ob_backup_body">Izaberite gde se čuvaju kopije snimaka. Preporučujemo izbor foldera; Nextcloud je dodatna mogućnost.</string>
     <string name="ob_backup_nc_configured">Nextcloud  ·  podešeno ✓</string>
-    <string name="ob_backup_nc_recommended">Nextcloud  ·  preporučeno</string>
+    <string name="ob_backup_nc_recommended">Nextcloud</string>
     <string name="ob_backup_nc_desc_review">Slanje na izabrani Nextcloud server preko HTTPS veze. Dodirnite da pregledate podešavanja.</string>
     <string name="ob_backup_nc_desc_setup">Povežite Nextcloud server uz vođeno podešavanje i proveru HTTPS veze.</string>
-    <string name="ob_backup_saf_chosen">Fascikla za kopije snimaka  ·  izabrana ✓</string>
-    <string name="ob_backup_saf">Izaberi fasciklu za kopije snimaka</string>
-    <string name="ob_backup_saf_desc">Izaberite fasciklu pomoću sistemskog birača datoteka. Servis u oblaku može se koristiti samo ako njegova aplikacija omogućava izbor fascikle za upis.</string>
-    <string name="ob_backup_note">Ovo možete preskočiti i podesiti kasnije. Snimci koji čekaju slanje ostaju šifrovani na uređaju, dok ima slobodnog prostora.</string>
+    <string name="ob_backup_saf_chosen">Folder je izabran · dodirnite za promenu</string>
+    <string name="ob_backup_saf">Izaberi folder · preporučeno</string>
+    <string name="ob_backup_saf_desc">U biraču datoteka dodirnite meni gore levo (☰). Ako imate instaliran Google Drive, Dropbox ili drugu aplikaciju za oblak i prijavljeni ste, izaberite je u bočnom meniju, pa izaberite folder. Prikazuju se samo servisi koji podržavaju pristup folderima. Možete izabrati i folder na telefonu.</string>
+    <string name="ob_backup_note">Kopije se podrazumevano šalju kao nešifrovani snimci koji mogu odmah da se otvore. Šifrovanje za primaoca i režim snimanja menjaju se u Podešavanja → Napredna podešavanja. Folder možete izabrati i kasnije; snimci koji čekaju slanje zauzimaju prostor na telefonu.</string>
     <string name="ob_skip">Preskoči za sada</string>
 
     <string name="ob_net_title">Veza za slanje snimaka</string>
-    <string name="ob_net_body">Mrežna veza i šifrovanje datoteka podešavaju se odvojeno. Izabrana veza utiče na to šta mogu da vide mrežni operator i servis koji čuva snimke.</string>
+    <string name="ob_net_body">Snimci se podrazumevano šalju preko dostupne Wi-Fi ili mobilne veze. Ako želite da slanje čeka VPN ili Tor, izaberite tu opciju.</string>
     <string name="ob_net_right_now">Trenutno stanje</string>
     <string name="ob_net_checking">Provera…</string>
     <!-- SAFETY: opisuju šta svaki izbor mreže krije, a šta ne. Korisnik na
@@ -241,7 +241,7 @@
     <string name="ob_net_tor_desc">Ugrađene veze sa servisima koriste Orbotov posrednik i čekaju ako nije dostupan. Ovo podešavanje ne obuhvata prijavu u pregledaču ni sinhronizaciju drugih aplikacija preko SAF-a. Tor je sporiji i zahteva Orbot.</string>
     <string name="ob_net_vpn_title">VPN  ·  mora da bude aktivan</string>
     <string name="ob_net_vpn_desc">Slanje čeka dok Android ne prijavi aktivan VPN. Sami podesite VPN i proverite da li obuhvata ovu aplikaciju. Prisustvo VPN-a ne potvrđuje putanju saobraćaja ni pouzdanost servisa.</string>
-    <string name="ob_net_none_title">Šalji preko dostupne veze</string>
+    <string name="ob_net_none_title">Bilo koja veza · podrazumevano</string>
     <string name="ob_net_none_desc">Snimci se šalju preko dostupne veze. Bez VPN-a ili Tor-a, servis može da vidi vašu javnu IP adresu, a mrežni operator odredište i vreme slanja.</string>
     <string name="ob_net_note">Datoteke koje čekaju vezu ostaju šifrovane na uređaju. Slobodan prostor je ograničen: pratite koliko datoteka čeka slanje i isprobajte slanje pre upotrebe.</string>
 
@@ -308,7 +308,7 @@
     <string name="set_segment_len_hint">podrazumevano 10</string>
 
     <string name="set_backup">Rezervne kopije i slanje</string>
-    <string name="set_method_saf">Fascikla izabrana na telefonu</string>
+    <string name="set_method_saf">Izaberi folder · telefon ili podržani servis u oblaku</string>
     <string name="set_method_cloud">Direktno slanje u oblak</string>
     <string name="set_choose_folder">Izaberi fasciklu</string>
     <string name="set_folder_configured">Fascikla je podešena ✓</string>
@@ -408,7 +408,7 @@
     <string name="export_plaintext">Pošalji nešifrovane snimke</string>
     <string name="export_explanation">Nešifrovane snimke i metapodatke mogu da čitaju servis i svako ko ima pristup nalogu. HTTPS/Tor i šifrovanje datoteka na telefonu podešavaju se odvojeno. Za otvaranje datoteka šifrovanih za primaoca potreban je njegov privatni ključ.</string>
     <string name="export_key_hint">Javni RSA ključ primaoca (PEM). Privatni ključ čuvajte van ovog telefona.</string>
-    <string name="export_existing_policy">Datoteke koje već čekaju slanje zadržavaju svoj način šifrovanja i odredište. One za koje izbor nije sačuvan čekaju podešavanje. Tor podešavanje ove aplikacije ne važi za druge aplikacije koje nude fascikle. Za slanje preko Tor-a koristite ugrađenu vezu sa servisom.</string>
+    <string name="export_existing_policy">Datoteke koje već čekaju slanje zadržavaju svoj način šifrovanja i odredište. One za koje izbor nije sačuvan čekaju podešavanje. Tor podešavanje ove aplikacije ne važi za saobraćaj drugih aplikacija koje nude foldere.</string>
     <string name="export_invalid_key">Unesite ispravan javni RSA ključ (2048–8192 bita) ili izaberite slanje bez šifrovanja.</string>
     <string name="folder_access_failed">Nije moguće sačuvati dozvolu za pristup ovoj fascikli. Izaberite fasciklu u koju aplikacija može da upisuje datoteke.</string>
     <string name="settings_recording_active">Zaustavite snimanje pre nego što promenite podešavanja.</string>
@@ -683,4 +683,12 @@
     <string name="adaptive_bitrate_live">Protok videa sada: %1$d kb/s</string>
     <string name="adaptive_bitrate_unavailable">Ovaj telefon ne podržava automatsko podešavanje protoka videa. Snimanje se nastavlja sa izabranom vrednošću.</string>
     <string name="capture_lock_phone">Snimanje je počelo. Telefon možete zaključati bočnim dugmetom.</string>
+    <string name="settings_advanced">Napredna podešavanja</string>
+    <string name="battery_setup_title">Snimanje sa zaključanim ekranom</string>
+    <string name="battery_setup_body">Dozvolite rad u pozadini kako štednja baterije ne bi prekidala snimanje. U podešavanjima telefona odobrite zahtev ili za ovu aplikaciju izaberite Bez ograničenja / Unrestricted.</string>
+    <string name="battery_setup_allowed">Androidova optimizacija baterije je isključena za ovu aplikaciju. Ograničenja proizvođača telefona i dalje mogu da važe.</string>
+    <string name="battery_setup_restricted">Androidova optimizacija baterije je još uključena za ovu aplikaciju.</string>
+    <string name="battery_setup_open">Podesi rad u pozadini</string>
+    <string name="battery_setup_unavailable">Otvorite podešavanja telefona, pronađite ovu aplikaciju i proverite opcije za bateriju i rad u pozadini.</string>
+    <string name="battery_setup_note">Posle izmene podešavanja vratite se ovde. Možete nastaviti i bez izmene, ali pre upotrebe isprobajte snimanje sa zaključanim ekranom. Ove opcije su dostupne i u podešavanjima aplikacije.</string>
 </resources>

@@ -39,9 +39,19 @@ public class ResolutionPolicyHarness {
         check(Prefs.INSTANCE.videoBitrateMode(context).equals("target") && Prefs.INSTANCE.videoTargetKbps(context) == 2000,
             "Fresh individual recording starts at the balanced 2 Mb/s target");
         check(Prefs.INSTANCE.adaptiveVideoBitrate(context), "Queue-aware bitrate adjustment is available to individual users");
-        check(Prefs.INSTANCE.recordingMode(context).equals("anonymous") && Prefs.INSTANCE.isSecureNetworkRequired(context),
-            "Individual metadata and network privacy defaults remain unchanged");
-        check(Prefs.INSTANCE.exportMode(context).equals("unconfigured"), "Individual uploads require an explicit confidentiality choice");
+        check(Prefs.INSTANCE.recordingMode(context).equals("evidence") && !Prefs.INSTANCE.isSecureNetworkRequired(context),
+            "Fresh installs use evidence mode and allow ordinary connections");
+        check(Prefs.INSTANCE.exportMode(context).equals("plaintext"), "Fresh uploads are ordinary playable files");
+        Prefs.INSTANCE.setRecordingMode(context, "anonymous");
+        Prefs.INSTANCE.setSecureNetworkRequired(context, true);
+        Prefs.INSTANCE.setExportPolicy(context, "encrypted", "synthetic public key");
+        check(Prefs.INSTANCE.isAnonymousMode(context) && Prefs.INSTANCE.isSecureNetworkRequired(context)
+            && Prefs.INSTANCE.exportMode(context).equals("encrypted"),
+            "Saved anonymous, VPN-required and recipient-encryption choices survive new defaults");
+        values.put("recording_mode", "invalid");
+        check(Prefs.INSTANCE.isAnonymousMode(context), "Malformed saved mode retains the private fallback");
+        values.put("export_mode", "unconfigured");
+        check(Prefs.INSTANCE.exportMode(context).equals("unconfigured"), "Legacy unresolved export policy is not silently weakened");
         Prefs.INSTANCE.setAdaptiveVideoBitrate(context, false);
         check(!Prefs.INSTANCE.adaptiveVideoBitrate(context), "An explicit opt-out of adaptive bitrate persists");
         Prefs.INSTANCE.setVideoBitrateMode(context, "auto");
