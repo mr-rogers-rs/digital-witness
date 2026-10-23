@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "UploadAPI",
+  "type": "object",
+  "properties": {
+    "initRequest": {
+      "type": "object",
+      "required": ["sessionId", "totalSize"],
+      "properties": {
+        "sessionId": {"type": "string"},
+        "totalSize": {"type": "integer", "minimum": 0}
+      }
+    },
+    "initResponse": {
+      "type": "object",
+      "required": ["uploadId", "offset"],
+      "properties": {
+        "uploadId": {"type": "string"},
+        "offset": {"type": "integer", "minimum": 0}
+      }
+    },
+    "chunkRequest": {
+      "type": "object",
+      "required": ["uploadId", "offset", "data"],
+      "properties": {
+        "uploadId": {"type": "string"},
+        "offset": {"type": "integer", "minimum": 0},
+        "data": {"type": "string", "description": "base64-encoded encrypted chunk"}
+      }
+    },
+    "chunkResponse": {
+      "type": "object",
+      "required": ["nextOffset"],
+      "properties": {
+        "nextOffset": {"type": "integer", "minimum": 0}
+      }
+    },
+    "finishRequest": {
+      "type": "object",
+      "required": ["uploadId", "rootHashes"],
+      "properties": {
+        "uploadId": {"type": "string"},
+        "rootHashes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "finishResponse": {
+      "type": "object",
+      "required": ["objectId"],
+      "properties": {
+        "objectId": {"type": "string"}
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+Digital Witness Contributors
+License: GNU Affero General Public License version 3 (AGPL-3.0-only).
+The complete license is included in LICENSE.
+
+Distribution revision: 2026-10-23.
+This source distribution removes personal and deployment documentation and
+replaces it with independent build and validation instructions. Test-runner
+names and a verifier User-Agent are neutralized. Recording behavior, package
+identifiers, dependency versions and protocol trust anchors are retained.
+
+Original license and attribution notices are preserved. The Gradle wrapper
+scripts retain their original-author and Apache License 2.0 notices verbatim;
+the wrapper JAR is unchanged. Dependencies retain their upstream licensing.
+This notice does not replace the licenses of upstream components.
+
+Distribution revision 0.3 improves Serbian interface wording and removes
+organizer-specific instructions from individual-edition recovery messages.

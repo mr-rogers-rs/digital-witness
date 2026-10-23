@@ -1,0 +1,746 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    All user-facing text lives here.
+
+    Two reasons this file exists beyond translation:
+
+    1. It makes the app's entire visible surface auditable in one place. Checking
+       that no screen leaks project branding, or that the cover story is
+       consistent between the launcher, Recent Apps and the notification shade,
+       previously meant reading eight Kotlin files.
+    2. It makes a locale a drop-in. See values-b+sr+Latn/strings.xml.
+
+    Provider setup walkthroughs are also localized here. Keep their menu
+    labels in sync with docs/sr-Latn and the English setup guides.
+
+    TRANSLATOR NOTE: strings marked SAFETY below are ones a user acts on under
+    stress. A mistranslation there has consequences beyond awkward phrasing —
+    get them reviewed by someone who understands the threat model, not only by
+    someone who speaks the language.
+-->
+<resources>
+
+    <!-- ══ Presentation / cover story (util/Disguise.kt) ══════════════════
+         These switch on the opt-in calculator disguise. The covert and honest
+         variants must each be internally consistent: the launcher label, the
+         Recent Apps card and the notification must never disagree, because a
+         mismatch is itself suspicious. -->
+    <string name="app_name">Field Recorder</string>
+    <string name="disguise_app_name">Calculator</string>
+
+    <string name="notif_title_honest">Field Recorder</string>
+    <string name="notif_title_covert">System</string>
+    <string name="notif_text_honest">Recording in progress</string>
+    <string name="notif_text_covert">Background sync</string>
+    <string name="notif_alert_title_honest">Recording needs attention</string>
+    <string name="notif_alert_title_covert">Sync paused</string>
+    <string name="notif_alert_text">Tap to open</string>
+    <string name="notif_channel_honest">Recording</string>
+    <string name="notif_channel_covert">Background sync</string>
+    <string name="notif_channel_desc_honest">Recording status</string>
+    <string name="notif_channel_desc_covert">System background processing</string>
+
+    <!-- ══ Lock screen (ui/LockScreenActivity.kt) ═════════════════════════ -->
+    <string name="lock_subtitle">Enter PIN to unlock</string>
+    <!-- SAFETY: lockout and wipe messages -->
+    <string name="lock_wait_seconds">Too many attempts. Wait %1$ds</string>
+    <string name="lock_threshold_wiping">Security threshold exceeded. Wiping…</string>
+    <string name="lock_incorrect_locked">Incorrect PIN. Locked for %1$ds</string>
+    <string name="lock_incorrect_count">Incorrect PIN (%1$d attempts)</string>
+    <string name="lock_incorrect">Incorrect PIN</string>
+
+    <!-- PIN setup fallback dialog (normally onboarding sets the PIN) -->
+    <string name="pin_setup_title">Set App PIN</string>
+    <string name="pin_setup_message">Choose a PIN to protect the app. You\'ll enter this each time you open the recorder.\n\nMust be 4+ digits and not a common pattern.</string>
+    <string name="pin_setup_hint">4+ digit PIN</string>
+    <string name="pin_setup_confirm">Set PIN</string>
+    <string name="pin_error_too_short">Must be at least 4 digits</string>
+    <string name="pin_error_weak">Too easy to guess</string>
+    <string name="pin_set_toast">PIN set</string>
+
+    <!-- ══ Calculator disguise (ui/CalculatorActivity.kt) ═════════════════
+         Keypad glyphs (0-9, C, OK, operators) stay as literals in code — they
+         are symbols, not prose. -->
+    <string name="calc_code_setup_title">Set Unlock Code</string>
+    <string name="calc_code_setup_message">Choose a secret digit sequence to unlock the app. Type these digits on the calculator then press = to enter.\n\nMust be 4+ digits and not a common pattern.</string>
+    <string name="calc_code_setup_hint">4+ digit unlock code</string>
+    <string name="calc_code_setup_confirm">Set Code</string>
+    <string name="calc_code_error_weak">Too easy to guess — choose a less obvious code</string>
+    <string name="calc_code_set_toast">Unlock code set</string>
+    <string name="calc_wait_seconds">Wait %1$ds</string>
+    <string name="calc_locked_seconds">Locked for %1$ds</string>
+
+    <!-- ══ Home (ui/MainActivity.kt) ══════════════════════════════════════ -->
+    <string name="mode_anonymous">Anonymous mode</string>
+    <string name="mode_evidence">Evidence mode</string>
+    <string name="status_recording">Recording</string>
+    <string name="status_idle">Idle</string>
+    <string name="action_start_recording">Start recording</string>
+    <string name="action_stop_recording">Stop recording</string>
+    <string name="section_backup">Backup</string>
+    <string name="backup_none">No destination configured</string>
+    <string name="backup_nextcloud">Nextcloud</string>
+    <string name="backup_saf">Device folder (SAF)</string>
+    <string name="backup_queue_size">Encrypted queue: %1$.1f MB</string>
+    <string name="action_setup_nextcloud">Set up Nextcloud</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_panic_wipe">Panic wipe</string>
+    <string name="error_permissions_denied">Permissions denied: %1$s</string>
+    <string name="error_generic">Error: %1$s</string>
+    <string name="error_recording_failed">Recording failed: %1$s</string>
+
+    <!-- SAFETY: destructive confirmation. Must be unambiguous that this is
+         irreversible; a user reads it while deciding under pressure. -->
+    <string name="panic_title">Destroy all data</string>
+    <string name="panic_message">This stops recording, destroys this app\'s encryption keys and attempts to delete local recordings and proof files.\n\nCopies in selected folders (SAF), cloud storage and other backups are not deleted. Complete erasure of flash storage cannot be guaranteed.\n\nThis cannot be undone.</string>
+    <string name="panic_confirm">Wipe everything</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="panic_done_toast">All data wiped (%1$d files)</string>
+    <string name="uninstall_title">Uninstall app?</string>
+    <string name="uninstall_message">Uninstall this app? Uninstalling does not delete external copies or guarantee removal of all traces.</string>
+    <string name="uninstall_confirm">Uninstall</string>
+    <string name="uninstall_keep">Keep app</string>
+
+    <string name="oem_guide_title">Background recording setup</string>
+    <string name="oem_guide_suffix">\n\nWithout these steps the system may kill recording within minutes of the screen turning off.</string>
+    <string name="oem_guide_open">Open settings</string>
+    <string name="oem_guide_later">Later</string>
+
+    <!-- ══ Capture failures (capture/SimplifiedCaptureService.kt) ═════════
+         SAFETY: these tell the user their evidence may not have been captured. -->
+    <string name="fail_camera_title">Camera Error</string>
+    <string name="fail_stalled_title">Recording Stalled</string>
+    <string name="fail_stalled_body">No audio or video captured — check permissions</string>
+    <string name="fail_mic_title">Microphone Unavailable</string>
+    <string name="fail_mic_body">Recording video only — check mic permission/availability</string>
+    <string name="fail_upload_title">Upload Failed</string>
+    <string name="fail_upload_body">SAF upload failed — check folder permissions</string>
+    <string name="fail_encrypt_title">Encryption Failed</string>
+    <string name="fail_encrypt_body">Segment kept locally for recovery</string>
+    <string name="fail_recording_title">Recording Error</string>
+    <string name="fail_recording_body">Segment processing failed: %1$s</string>
+    <string name="fail_muxer_title">Recording Failed</string>
+    <string name="fail_muxer_body">Video muxer error — segment lost</string>
+
+    <!-- ══ OEM background-restriction guidance (util/OemUtil.kt) ══════════
+         %1$s is the app label, so this always names what the user will
+         actually see in their system settings. It previously hardcoded the
+         old project name in four places — user-facing text that survived the
+         package rename because it is display copy, not a package reference. -->
+    <string name="oem_xiaomi">Xiaomi/MIUI detected. For reliable recording:
+
+1. Go to Settings → Apps → Manage apps → %1$s
+2. Enable \"Autostart\"
+3. Under \"Battery saver\", choose \"No restrictions\"
+4. Lock the app in Recent Apps (swipe down on the card)</string>
+    <string name="oem_samsung">Samsung detected. For reliable recording:
+
+1. Go to Settings → Battery → Background usage limits
+2. Add %1$s to \"Never sleeping apps\"
+3. Go to Settings → Apps → %1$s → Battery → Unrestricted</string>
+    <string name="oem_huawei">Huawei/EMUI detected. For reliable recording:
+
+1. Go to Settings → Battery → App launch
+2. Find %1$s and set to \"Manage manually\"
+3. Enable Auto-launch, Secondary launch, and Run in background</string>
+    <string name="oem_oppo">OPPO/Realme/OnePlus detected. For reliable recording:
+
+1. Go to Settings → Battery → App battery management
+2. Set %1$s to \"Allow background activity\"
+3. Lock the app in Recent Apps (swipe down on the card)</string>
+
+    <!-- ══ Camera calibration (ui/CalibrationActivity.kt) ═════════════════ -->
+    <string name="calib_title">Camera Calibration</string>
+    <string name="calib_no_permission">Camera permission required. Go back and start a recording first.</string>
+    <string name="calib_no_info">Could not read camera info.</string>
+    <string name="calib_sensor">Sensor: %1$dx%2$d  (%3$s:1)</string>
+    <string name="calib_intro">Tests %1$ds of video with your saved recording settings. A resolution passes only after its video can be decoded and a preview frame is saved.</string>
+    <string name="calib_test_all">Test All Resolutions</string>
+    <string name="calib_test">Test</string>
+    <string name="calib_testing">Testing…</string>
+    <string name="calib_footnote">The reference is the largest full-aspect video size at the highest supported normal rate, up to 30 FPS. Photo megapixels do not determine video resolution. Reject any smaller mode that loses a scene edge.</string>
+    <string name="calib_err_no_permission">No permission</string>
+    <string name="calib_err_timeout">Camera timeout</string>
+
+    <!-- ══ Nextcloud setup wizard (ui/NextcloudSetupActivity.kt) ══════════
+         End-user guided setup, so it IS translated — unlike the four
+         developer-facing provider walkthroughs in SettingsActivity. -->
+    <string name="nc_title">Connect Nextcloud</string>
+    <string name="nc_subtitle">Send recordings to your chosen server. Upload encryption is selected separately in Settings.</string>
+    <string name="nc_note">Use a revocable app password, never your login password. This build requires HTTPS.</string>
+    <string name="nc_server_url">Server URL</string>
+    <string name="nc_server_url_hint">https://cloud.example.com or https://cloud.example.com/nextcloud</string>
+    <string name="nc_username">Username</string>
+    <string name="nc_username_hint">Your Nextcloud username</string>
+    <string name="nc_app_password">App password</string>
+    <string name="nc_app_password_hint">Settings → Security → Create app password</string>
+    <string name="nc_app_password_help">How do I get an app password?</string>
+    <string name="nc_folder">Destination folder</string>
+    <string name="nc_advanced_collapsed">▸  Advanced (certificate pin, chunk size)</string>
+    <string name="nc_advanced_expanded">▾  Advanced (certificate pin, chunk size)</string>
+    <string name="nc_pin_explain">Use an independently obtained SHA-256 public-key pin to restrict accepted HTTPS certificates.</string>
+    <string name="nc_cert_pin">Certificate pin (SHA-256 SPKI)</string>
+    <string name="nc_cert_pin_hint">Optional: independently verified SHA-256 SPKI fingerprint</string>
+    <string name="nc_fetch_fingerprint">Fetch &amp;&amp; show server fingerprint</string>
+    <string name="nc_chunk_size">Chunk size (MB)</string>
+    <string name="nc_test">Test connection</string>
+    <string name="nc_save">Save &amp; use Nextcloud</string>
+    <string name="nc_need_fields">Enter the server URL, username, and app password first.</string>
+    <string name="nc_testing">Testing connection…</string>
+    <string name="nc_connected">✓ Connected. The server accepted your app password.</string>
+    <string name="nc_failed">✗ Could not connect. Check the URL and app password (and that Tor is running if this is an .onion address).</string>
+    <string name="nc_fetching_cert">Fetching server certificate…</string>
+    <string name="nc_fingerprint_title">Server certificate fingerprint</string>
+    <!-- SAFETY: out-of-band verification instruction — the pin is worthless if
+         the user accepts whatever the network hands them. -->
+    <string name="nc_fingerprint_message">sha256/%1$s
+
+Verify this matches your server out-of-band (e.g. on the server console) before you trust it, then Save.</string>
+    <string name="nc_no_cert">Could not retrieve the TLS certificate. Check the HTTPS address and network settings.</string>
+    <string name="nc_required_fields">Server URL, username, and app password are required</string>
+    <string name="nc_saved">Nextcloud saved</string>
+    <string name="nc_help_title">Create a Nextcloud app password</string>
+    <string name="nc_help_steps">1.  Log in to Nextcloud in a browser.
+2.  Click your avatar → Settings → Security.
+3.  Under \"Devices &amp; sessions\", type an innocuous name (e.g. \"Backups\").
+4.  Click \"Create new app password\".
+5.  Copy the generated password (shown only once) and paste it above.
+
+An app password is separate from your login password and can be revoked individually — good practice if a device is ever lost or seized.</string>
+    <string name="nc_help_open_security">Open security settings</string>
+    <string name="action_close">Close</string>
+    <string name="action_ok">OK</string>
+    <string name="no_browser">No browser available</string>
+
+    <!-- ══ Onboarding (ui/OnboardingActivity.kt) ══════════════════════════
+         The first-run flow. Several of these are the only place a user is ever
+         told what the app does and does not protect, so clarity beats brevity. -->
+    <string name="ob_step_counter">Step %1$d of %2$d</string>
+    <string name="action_continue">Continue</string>
+    <string name="action_back">Back</string>
+
+    <string name="ob_welcome_body">Record audio and video with integrity proofs for later checks. Proofs do not establish scene truth, exact capture time, or completeness by themselves.</string>
+    <string name="ob_welcome_b1_t">Tamper-evident</string>
+    <string name="ob_welcome_b1_d">Hashes and signatures help check downloaded recordings for changes. A trusted checkpoint is needed to assess completeness.</string>
+    <string name="ob_welcome_b2_t">Private by default</string>
+    <string name="ob_welcome_b2_d">Recordings are encrypted on the device and can be routed through Tor.</string>
+    <string name="ob_welcome_b3_t">Yours to keep</string>
+    <string name="ob_welcome_b3_d">Uploads go to storage you control — a folder or your own Nextcloud.</string>
+    <string name="ob_get_started">Get started</string>
+
+    <string name="ob_how_title">How it works</string>
+    <string name="ob_how_body">During recording the app processes short segments. Configure the destination, upload encryption and network before sending files.</string>
+    <string name="ob_how_1_t">1 · Record</string>
+    <string name="ob_how_1_d">Video and audio are captured in short segments.</string>
+    <string name="ob_how_2_t">2 · Seal</string>
+    <string name="ob_how_2_d">Segments are linked by hashes. The app requests timestamp proofs when network settings allow.</string>
+    <string name="ob_how_3_t">3 · Protect</string>
+    <string name="ob_how_3_d">Finished segments are encrypted for local storage. Temporary unencrypted files exist during processing.</string>
+    <string name="ob_how_4_t">4 · Back up</string>
+    <string name="ob_how_4_d">Recordings are sent according to your chosen destination, upload encryption and network settings.</string>
+    <string name="ob_how_note">The verification tool checks integrity and available timestamp proofs. It cannot by itself establish the truth of a scene, exact capture time or completeness.</string>
+
+    <string name="ob_pin_title">Set your PIN</string>
+    <string name="ob_pin_body">You\'ll enter this each time you open the app. Choose 4+ digits that aren\'t an obvious pattern.</string>
+    <string name="ob_pin_label">PIN</string>
+    <string name="ob_pin_hint">4+ digits</string>
+    <string name="ob_pin_confirm_label">Confirm PIN</string>
+    <string name="ob_pin_confirm_hint">Re-enter your PIN</string>
+    <!-- SAFETY: first mention of the duress code. -->
+    <string name="ob_pin_tip">You can add a duress code later in Settings. It starts key destruction and local cleanup; cloud and SAF copies remain.</string>
+    <string name="ob_pin_button">Set PIN &amp; continue</string>
+    <string name="ob_pin_err_short">PIN must be at least 4 digits</string>
+    <string name="ob_pin_err_weak">That PIN is too easy to guess</string>
+    <string name="ob_pin_err_mismatch">The two PINs don\'t match</string>
+
+    <string name="ob_perm_title">Camera &amp; microphone</string>
+    <string name="ob_perm_body">Video needs camera access. Microphone access is needed only when recording audio. Notifications let the app show a persistent recording indicator.</string>
+    <string name="perm_camera">Camera</string>
+    <string name="perm_microphone">Microphone</string>
+    <string name="perm_notifications">Notifications</string>
+    <string name="perm_granted">Granted ✓</string>
+    <string name="perm_needed">Needed</string>
+    <string name="ob_perm_ok_note">You\'re all set. You can change these anytime in system settings.</string>
+    <string name="ob_perm_grant">Grant permissions</string>
+    <string name="ob_perm_open_settings">Open app settings</string>
+
+    <string name="ob_mode_title">Recording mode</string>
+    <string name="ob_mode_body">This controls what metadata goes into your recordings. You can change it later.</string>
+    <!-- SAFETY: the anonymity-vs-evidence tradeoff. Getting this wrong in
+         translation could lead someone to pick the identifying mode. -->
+    <string name="ob_mode_anon_title">Anonymous  ·  recommended</string>
+    <string name="ob_mode_anon_desc">Reduces device, network and language metadata and disables GPS. Footage and remaining metadata may still identify you. An unsigned hash chain is recomputable.</string>
+    <string name="ob_mode_ev_title">Evidence</string>
+    <string name="ob_mode_ev_desc">Keeps additional device and environment metadata and signs proof records. This may identify the device and, if GPS is enabled, the location. It does not guarantee acceptance as legal evidence.</string>
+
+    <string name="ob_backup_title">Where recordings go</string>
+    <string name="ob_backup_body">Choose where copies are sent. On this screen, also choose ordinary files or encryption for a recipient.</string>
+    <string name="ob_backup_nc_configured">Nextcloud  ·  configured ✓</string>
+    <string name="ob_backup_nc_recommended">Nextcloud  ·  recommended</string>
+    <string name="ob_backup_nc_desc_review">Upload to your chosen Nextcloud server over HTTPS. Tap to review the connection.</string>
+    <string name="ob_backup_nc_desc_setup">Connect a Nextcloud server with guided setup and an HTTPS connection test.</string>
+    <string name="ob_backup_saf_chosen">Device folder  ·  chosen ✓</string>
+    <string name="ob_backup_saf">Device folder</string>
+    <string name="ob_backup_saf_desc">Select a folder with the system file picker. A cloud app is usable here only if it exposes a writable folder.</string>
+    <string name="ob_backup_note">You can skip this and configure it later in Settings. Pending recordings remain encrypted on the device, subject to available storage.</string>
+    <string name="ob_skip">Skip for now</string>
+
+    <string name="ob_net_title">How uploads travel</string>
+    <string name="ob_net_body">Network routing and file encryption are separate choices. The connection affects what the network operator and storage provider can see.</string>
+    <string name="ob_net_right_now">Right now</string>
+    <string name="ob_net_checking">Checking…</string>
+    <!-- SAFETY: these four describe what each network choice does and does not
+         hide. A user picks their exposure based on this text. -->
+    <string name="ob_net_tor_title">Tor  ·  strongest</string>
+    <string name="ob_net_tor_desc">Direct cloud requests use the Orbot proxy and wait if it is unavailable. This does not route browser authorization or another app\'s SAF cloud sync. Tor is slower and requires Orbot.</string>
+    <string name="ob_net_vpn_title">VPN  ·  requires one to be running</string>
+    <string name="ob_net_vpn_desc">Uploads wait unless Android reports an active VPN. You configure the VPN yourself; check that it covers this app. VPN detection alone does not verify its route or trustworthiness.</string>
+    <string name="ob_net_none_title">No requirement</string>
+    <string name="ob_net_none_desc">Uploads go over whatever connection you have. Your network operator sees when you upload and to where; your storage provider sees your real IP address.</string>
+    <string name="ob_net_note">Pending files remain in the encrypted local queue while waiting for the required connection. Available storage is limited: check the queue and test delivery before use.</string>
+
+    <string name="ob_orbot">Orbot</string>
+    <string name="ob_orbot_missing">Not installed. Orbot is a free app from the Guardian Project that provides the Tor connection this setting uses.</string>
+    <string name="ob_orbot_get">Get Orbot</string>
+    <string name="ob_orbot_installed">Installed. Open it and tap Start, then come back — this screen re-checks automatically.</string>
+    <string name="ob_orbot_open">Open Orbot</string>
+    <string name="ob_orbot_recheck">Re-check</string>
+    <string name="ob_orbot_no_store">No store or browser available</string>
+    <string name="ob_orbot_cant_open">Could not open Orbot</string>
+
+    <!-- SAFETY: the live upload verdict. Must mirror TorManager.shouldBlockUpload. -->
+    <string name="ob_net_status_none">Uploads will go out over your normal connection, with your real IP visible.</string>
+    <string name="ob_net_status_tor_ok">Orbot proxy reachable. The Tor network requirement is satisfied; delivery still needs a working destination.</string>
+    <string name="ob_net_status_tor_blocked">Uploads are blocked: Tor is selected, but Orbot isn\'t running yet.</string>
+    <string name="ob_net_status_vpn_ok">VPN detected. The VPN network requirement is satisfied; delivery still needs a working destination.</string>
+    <string name="ob_net_status_blocked">Uploads are blocked: no VPN detected, and Tor is off.</string>
+
+    <string name="ob_done_title">You\'re ready</string>
+    <string name="ob_done_body">Before first use, make a test recording and check that you can download and open the copy on another device.</string>
+    <string name="ob_sum_mode">Recording mode</string>
+    <string name="ob_sum_backup">Backup</string>
+    <string name="ob_sum_uploads">Uploads</string>
+    <string name="ob_sum_applock">App lock</string>
+    <string name="ob_mode_anonymous_short">Anonymous</string>
+    <string name="ob_mode_evidence_short">Evidence</string>
+    <string name="ob_dest_none">Not set (configure in Settings)</string>
+    <string name="ob_uploads_any">Any connection</string>
+    <string name="ob_uploads_tor">Tor only</string>
+    <string name="ob_uploads_vpn">VPN required</string>
+    <string name="ob_applock_pin_set">PIN set</string>
+    <string name="ob_done_note">Consider a duress code in Settings. Entering it attempts local cleanup and key destruction. It does not remove cloud or SAF copies or guarantee complete erasure.</string>
+    <string name="ob_start">Start using %1$s</string>
+
+    <!-- ══ Settings (ui/SettingsActivity.kt) ══════════════════════════════
+         The four provider setup walkthroughs (dropboxHelpText, googleDriveHelpText,
+         webdavHelpText, nextcloudHelpText) stay as Kotlin constants by decision:
+         developer-facing, URL- and shell-command-heavy, ~1/3 of all app text. -->
+    <string name="set_title">Settings</string>
+    <string name="set_calibrate">Calibrate camera</string>
+
+    <string name="set_quality">Video recording</string>
+    <string name="set_preset_battery">Fewer frames · same native resolution · 15 fps</string>
+    <string name="set_preset_balanced">Normal · native frame rate</string>
+    <string name="set_preset_quality">Higher quality · up to 1080p · target 30 fps</string>
+    <string name="set_preset_full">Maximum resolution · 30 fps · higher battery and storage use</string>
+    <string name="set_preset_custom">Custom native frame rate and bitrate</string>
+    <string name="set_max_height">Max video height (px)</string>
+    <string name="set_max_height_hint">e.g. 480, 720, 1080</string>
+    <string name="set_fps">Frame rate</string>
+    <string name="set_fps_hint">10-60</string>
+    <string name="set_video_bitrate">Video bitrate (kbps)</string>
+    <string name="set_video_bitrate_hint">e.g. 400, 1500, 5000</string>
+    <string name="set_codec">Video codec</string>
+    <string name="set_codec_auto">Auto</string>
+    <string name="set_audio_rate">Audio sample rate (Hz)</string>
+    <string name="set_audio_bitrate">Audio bitrate (kbps)</string>
+    <string name="set_audio_bitrate_hint">12-128</string>
+    <string name="set_gop">Keyframe interval (seconds)</string>
+    <string name="set_gop_hint">1-15</string>
+
+    <string name="set_recording">Recording</string>
+    <string name="set_enable_video">Enable video recording</string>
+    <string name="set_wakelock">Keep running in background (wakelock)</string>
+    <string name="set_segment_len">Segment length (seconds)</string>
+    <string name="set_segment_len_hint">default 10</string>
+
+    <string name="set_backup">Backup &amp; upload</string>
+    <string name="set_method_saf">Choose a folder on this device (SAF)</string>
+    <string name="set_method_cloud">Upload directly to cloud</string>
+    <string name="set_choose_folder">Choose folder</string>
+    <string name="set_folder_configured">Folder configured ✓</string>
+    <string name="set_folder_none">No folder selected</string>
+    <string name="set_cloud_provider">Cloud provider</string>
+    <string name="set_provider_dropbox">Dropbox</string>
+    <string name="set_provider_gdrive">Google Drive</string>
+    <string name="set_provider_webdav">WebDAV (generic)</string>
+    <string name="set_provider_nextcloud">Nextcloud (chunked uploads)</string>
+
+    <!-- SAFETY: jurisdiction warnings. These tell the user which states can
+         compel their evidence and link it to them. -->
+    <string name="set_juris_dropbox">Dropbox links uploads to your account. Provider access and legal disclosure depend on its service terms and applicable law. Choose recipient encryption if the provider must not read the content.</string>
+    <string name="set_juris_gdrive">Google Drive links uploads and metadata to your account. Provider access and legal disclosure depend on its service terms and applicable law. Choose recipient encryption if the provider must not read the content.</string>
+    <string name="set_juris_webdav">WebDAV: assess who controls the server and where it is hosted. HTTPS protects transport; recipient encryption separately protects file contents from the server.</string>
+    <string name="set_juris_nextcloud">Nextcloud: choose a server you trust. Use HTTPS and a revocable app password; choose upload encryption separately.</string>
+
+    <string name="set_access_token">Access token (OAuth)</string>
+    <string name="set_access_token_hint">Paste your access token</string>
+    <string name="set_dropbox_key">Dropbox app key (for auto-refresh)</string>
+    <string name="set_dropbox_key_hint">App key from Dropbox App Console</string>
+    <string name="set_dropbox_refresh">Dropbox refresh token</string>
+    <string name="set_dropbox_refresh_hint">Paste your refresh token</string>
+    <string name="set_token_note">Connecting Dropbox fills in the tokens and enables renewal. An access token alone is temporary.</string>
+    <string name="set_webdav_url">WebDAV URL</string>
+    <string name="set_webdav_url_hint">https://host/remote.php/dav/files/user/</string>
+    <string name="set_username">Username</string>
+    <string name="set_password">Password</string>
+    <string name="set_nc_guided">Guided setup &amp; connection test</string>
+    <string name="set_advanced_optional">Advanced (optional)</string>
+    <string name="set_cert_pin_hint">Optional: independently verified SHA-256 SPKI fingerprint</string>
+    <string name="set_help_button">Setup help for selected provider</string>
+    <string name="set_test_cloud">Test cloud connection</string>
+    <string name="set_test_ok">Connection successful ✓</string>
+    <string name="set_test_fail">Connection failed. Check credentials.</string>
+
+    <string name="set_local_storage">Local storage</string>
+    <string name="set_keep_local">Keep recordings after upload (encrypted)</string>
+    <string name="set_archive_max">Maximum local storage (MB)</string>
+    <string name="set_archive_max_hint">50-10000</string>
+    <string name="set_storage_usage">Upload queue: %1$.1f MB   ·   Archive: %2$.1f MB</string>
+
+    <string name="set_security">App security</string>
+    <string name="set_pin_label">App PIN (lock screen and calculator)</string>
+    <string name="set_code_already_set">Already set — type a new code to change</string>
+    <string name="set_pin_required_hint">4+ digits (required)</string>
+    <string name="set_duress_label">Duress code (optional — triggers silent wipe)</string>
+    <string name="set_duress_hint">4+ digits, or blank to disable</string>
+    <!-- SAFETY: what the duress code actually does. -->
+    <string name="set_duress_explain">Entering this code on the lock screen or calculator starts key destruction and local cleanup. External copies remain, and complete erasure is not guaranteed. Use a different code from your unlock PIN.</string>
+    <string name="set_err_unlock_weak">Unlock code must be 4+ digits and not a common pattern</string>
+    <string name="set_err_duress_short">Duress code must be 4+ digits</string>
+    <string name="set_err_duress_same">Duress code must differ from unlock code</string>
+    <string name="set_err_duress_weak">Duress code is too easy to guess</string>
+
+    <string name="set_disguise">Calculator disguise (advanced)</string>
+    <string name="set_disguise_toggle">Enable calculator disguise launcher</string>
+    <!-- SAFETY: argues against enabling a feature. Must not read as a
+         recommendation to turn it on. -->
+    <string name="set_disguise_warning">Adds a second launcher icon that looks like a calculator; your PIN followed by = unlocks the recorder.\n\nWARNING: calculator-disguise apps are a known pattern that forensic tools and border agents can identify. Being caught with a deceptive app may be more incriminating than a visible recorder with a lock screen. Only enable if disguise fits your threat model.</string>
+
+    <string name="set_mode">Recording mode</string>
+    <string name="set_mode_evidence">Evidence  ·  full device &amp; environment metadata for court use</string>
+    <string name="set_mode_anonymous">Anonymous  ·  strips device fingerprint, network, locale</string>
+    <string name="set_mode_explain">Evidence mode keeps additional device and environment metadata and signs proof records. Anonymous mode reduces identifying metadata and disables GPS, but footage and remaining metadata can still identify you. Hashes help check consistency; an unsigned chain can be recomputed. Completeness needs a trusted checkpoint.</string>
+
+    <string name="set_location">Location</string>
+    <string name="set_gps_toggle">Include GPS coordinates in proof metadata</string>
+    <!-- SAFETY -->
+    <string name="set_gps_warning">WARNING: GPS reveals your physical location. Only enable if you want location evidence in your proof files. Disable for anonymity.</string>
+    <string name="set_gps_anon_blocked">GPS is disabled in Anonymous mode</string>
+    <string name="set_location_denied">Location permission denied</string>
+
+    <string name="set_network">Network privacy</string>
+    <string name="set_secure_net">Require secure network (VPN or Tor) for uploads</string>
+    <string name="set_secure_net_explain">Blocks external uploads until the selected network condition is met. When Tor is enabled its proxy must be reachable; otherwise Android must report an active VPN. Test your VPN routing separately.</string>
+    <string name="set_tor_toggle">Route app traffic through Tor (requires Orbot)</string>
+    <string name="set_tor_explain">Direct cloud and timestamp requests use Orbot\'s SOCKS5 proxy. Browser authorization and other apps\' SAF sync use their own network settings. This setting alone does not route those apps.</string>
+    <string name="set_check_network">Check network status</string>
+    <string name="set_setup_orbot">Set up Orbot</string>
+    <string name="set_orbot_install_title">Install Orbot</string>
+    <string name="set_orbot_install_msg">Tor routing requires Orbot (Guardian Project).\n\n1. Install Orbot\n2. Open it and tap Start\n3. Come back and enable Tor here\n\nIf you use a VPN instead, you don\'t need Orbot — just enable \'Require secure network\' above.</string>
+    <string name="set_orbot_install_action">Install Orbot</string>
+    <string name="set_orbot_cant_store">Cannot open store</string>
+    <string name="set_orbot_start_title">Start Orbot</string>
+    <string name="set_orbot_start_msg">Orbot is installed but the proxy is not running. Open Orbot and tap Start.</string>
+    <string name="set_orbot_open">Open Orbot</string>
+    <string name="set_orbot_cant_open">Cannot open Orbot</string>
+    <string name="set_tor_connected">Orbot proxy reachable</string>
+
+    <string name="set_save">Save settings</string>
+    <string name="set_fingerprint_msg">sha256/%1$s\n\nVerify this matches your server out-of-band (e.g. on the server console) before trusting it, then Save.</string>
+    <string name="set_no_cert">Could not retrieve the TLS certificate. Check the HTTPS address and network settings.</string>
+
+    <string name="calib_err_camera">Camera error %1$d</string>
+    <string name="calib_err_session_timeout">Session timeout</string>
+    <string name="calib_err_session_failed">Session failed</string>
+    <string name="export_title">File encryption</string>
+    <string name="export_encrypted">Encrypt for recipient (public key required)</string>
+    <string name="export_plaintext">Upload unencrypted, playable footage</string>
+    <string name="export_explanation">Unencrypted uploads let the storage provider and account holders read footage and proof metadata. HTTPS/Tor transport and local queue encryption remain independent. Encrypted uploads require the recipient’s private key to open.</string>
+    <string name="export_key_hint">Recipient RSA public key (PEM). Keep the private key off this phone.</string>
+    <string name="export_existing_policy">Queued items keep their selected encryption and destination. Unconfigured items wait for your choice. External cloud folders do not inherit this app’s Tor routing and are blocked while secure networking is required; use a direct cloud provider instead.</string>
+    <string name="export_invalid_key">Enter a valid RSA public key (2048–8192 bits), or choose unencrypted uploads.</string>
+    <string name="folder_access_failed">Cannot retain access to this folder. Choose a writable folder.</string>
+    <string name="settings_recording_active">Stop recording before changing settings.</string>
+    <string name="dropbox_key_required">Enter the Dropbox app key first.</string>
+    <string name="dropbox_auth_intro">Open Dropbox, approve access, then paste the code here. Your browser uses its own network settings; app Tor routing does not cover it.</string>
+    <string name="dropbox_auth_code">Authorization code</string>
+    <string name="dropbox_auth_open">1. Open Dropbox authorization</string>
+    <string name="dropbox_auth_connect">2. Connect</string>
+    <string name="dropbox_auth_title">Connect Dropbox</string>
+    <string name="dropbox_auth_success">Connected. Save Settings to use this account.</string>
+    <string name="dropbox_auth_failed">Connection failed. Check the network settings and start authorization again; the code may have expired.</string>
+    <string name="dropbox_connect_browser">Connect Dropbox in browser</string>
+    <string name="help_dropbox_title">Dropbox setup</string>
+    <string name="help_gdrive_title">Google Drive setup</string>
+    <string name="help_webdav_title">WebDAV setup</string>
+    <string name="help_nextcloud_title">Nextcloud setup</string>
+    <string name="help_cloud_title">Cloud setup</string>
+    <string name="help_dropbox_console">Open Dropbox App Console</string>
+    <string name="help_oauth_playground">Open OAuth Playground</string>
+    <string name="help_about_nextcloud">About Nextcloud</string>
+    <string name="action_open">Open</string>
+    <string name="export_status_encrypted">Uploads encrypted for the recipient</string>
+    <string name="export_status_plaintext">Unencrypted uploads: provider can read recordings</string>
+    <string name="export_status_unconfigured">Uploads paused: choose upload encryption in Settings</string>
+    <string name="net_vpn_active">VPN detected</string>
+    <string name="net_vpn_absent">No VPN detected</string>
+    <string name="net_tor_disabled">Tor disabled</string>
+    <string name="net_tor_reachable">Orbot proxy reachable</string>
+    <string name="net_tor_stopped">Tor enabled; Orbot proxy unavailable</string>
+    <string name="net_tor_missing">Tor enabled; Orbot not installed</string>
+    <string name="net_requirement_ok">Network requirement met; delivery still depends on the destination</string>
+    <string name="net_blocked_tor">Uploads blocked: start Orbot/Tor</string>
+    <string name="net_blocked_vpn">Uploads blocked: start a VPN or enable Tor</string>
+    <string name="panic_cleanup_done">Keys removed; local cleanup attempted. Restart resumes cleanup. Remote copies are unchanged.</string>
+    <string name="panic_cleanup_incomplete">Wipe incomplete. Close and restart the app to retry local cleanup.</string>
+    <string name="fail_camera_configuration">Could not configure the camera for recording.</string>
+    <string name="fail_camera_code">Camera error code: %1$d</string>
+    <string name="fail_start_recording">Could not start recording. Check app permissions and try again.</string>
+    <string name="fail_segment_processing">Could not finish processing the segment. Check available storage.</string>
+    <string name="fail_mp4_creation">Could not create the MP4 recording. This segment may not have been saved.</string>
+    <string name="calib_no_frames">No frames recorded</string>
+    <string name="calib_result">%1$d frames · %2$d keyframes · %3$.0f fps · %4$d kb/s</string>
+    <string name="calib_failed">Test failed</string>
+    <string name="perm_other">Other permission</string>
+    <string name="calc_delete">Delete last digit</string>
+    <string name="help_dropbox_body">1. Enter the Dropbox app key supplied with your build, then choose Connect Dropbox in browser.\n2. Open authorization, sign in on www.dropbox.com and approve access. Copy the code, return here and choose Connect.\n3. Save Settings, choose an upload folder and select Upload encryption. Save again.\n4. Download a harmless test recording and its proof files on another device. Check playback or decryption and verification before use.\n\nThe connection uses PKCE and a refresh token. Never enter an app secret on the phone. If authorization expires, start it again.\n\nThe browser uses its own network settings. This app\'s Tor setting covers direct Dropbox requests, not browser sign-in.\n\nFor maintainers: register one scoped App Folder app in the Dropbox App Console with account_info.read, files.content.write, files.metadata.read and files.metadata.write. Distribute its public app key. A public release may require Dropbox production approval.\n\nUnencrypted uploads are readable by the provider and anyone with account access. Recipient-encrypted .jwe files require the recipient\'s private key and cannot be previewed as videos in Dropbox. Pending files keep their saved destination and encryption choice.</string>
+    <string name="help_gdrive_body">Google Drive setup uses OAuth tokens entered manually. There is no guided browser sign-in for Drive in this screen. Prefer the guided Dropbox or Nextcloud setup if you need simpler configuration.\n\nFor a short test:\n1. Open https://developers.google.com/oauthplayground\n2. Select Drive API v3 and the scope https://www.googleapis.com/auth/drive.file\n3. Choose Authorize APIs and approve access.\n4. Choose Exchange authorization code for tokens.\n5. Copy Access token into the access-token field here.\n6. Choose a destination folder, select upload encryption, and save.\n\nAccess tokens expire. Do not rely on a manually pasted token for unattended recording. The provider has refresh-token support in code, but this screen does not offer a complete guided Google client-credential setup.\n\nDownload a test recording and proof files on another device and check them. Browser sign-in uses the browser\'s own network settings. Never share tokens in screenshots or support reports.</string>
+    <string name="help_webdav_body">Enter the full HTTPS WebDAV endpoint, username and password. For Nextcloud, prefer the dedicated Nextcloud option and use an app password rather than your login password.\n\nNextcloud endpoint:\nhttps://YOUR_SERVER/remote.php/dav/files/YOUR_USERNAME/\nFor a server installed in a subfolder, include that subfolder before /remote.php.\n\nFor other WebDAV servers, copy the endpoint provided by the administrator. It is not a public share link. Choose a writable destination folder, select upload encryption and save.\n\nTest the connection, then send a harmless recording and download it with its proof files on another device. A successful connection test does not prove that file creation, upload and readback work.\n\nIf authentication fails, check the username, app password and folder permissions. If TLS fails, check the certificate and HTTPS address; do not bypass certificate validation. Browser and other apps\' traffic do not inherit this app\'s Tor setting.</string>
+    <string name="help_nextcloud_body">1. Sign in to Nextcloud in a browser. Open account settings → Security → Devices &amp; sessions and create an app password. Copy it; do not use your main login password.\n2. In guided setup, enter the HTTPS server base URL, for example https://cloud.example.com or https://cloud.example.com/nextcloud. Do not enter a public share link or full WebDAV path.\n3. Enter your actual username, app password and destination folder. Create nested folders on the server first.\n4. Test the connection and save. Then select Upload encryption in Settings and save.\n5. Send a harmless recording, download the footage and companion proof files on another device, and test playback/decryption and verification.\n\nThe dedicated integration sends large files in chunks and checks uploaded content by downloading it again. This uses extra bandwidth and does not guarantee future retention. Recovery after every type of interruption has not been verified on all servers.\n\nHTTPS is required, including for .onion addresses. If Tor is enabled, start Orbot. The browser uses its own network settings.\n\nAn optional SHA-256 SPKI fingerprint restricts accepted server certificates. Verify it independently, for example through the server console. Fetching a fingerprint alone does not authenticate the server.\n\nA connection test does not prove write access. Check quota, folder permissions and server/proxy limits if uploads fail. Pending files keep their saved destination; finish the queue before changing accounts. App-password revocation does not erase files already uploaded.</string>
+    <string name="language_title">Language / Jezik</string>
+    <string name="language_english">English</string>
+    <string name="language_serbian">Srpski (latinica)</string>
+    <string name="language_change_note">Changes immediately. Save any other settings before switching languages.</string>
+    <string name="upload_block_choice">Not uploading: choose encrypted or unencrypted uploads.</string>
+    <string name="upload_block_key">Not uploading: the recipient public key is missing or invalid.</string>
+    <string name="upload_block_destination">Not uploading: configure a destination and its login details.</string>
+    <string name="upload_block_folder">Not uploading: folder access is missing. Select the folder again.</string>
+    <string name="upload_block_external_saf">Not uploading: this external SAF app cannot use the recorder’s Tor/VPN policy. Use direct Nextcloud/Dropbox or review network settings.</string>
+    <string name="upload_block_offline">Waiting for a network connection. Files remain queued on this phone.</string>
+    <string name="upload_block_tor">Not uploading: start Orbot/Tor. Files remain queued.</string>
+    <string name="upload_block_vpn">Not uploading: a VPN is required but none is detected.</string>
+    <string name="upload_block_changed">Some queued files belong to the previous destination. Restore its account/folder to send them.</string>
+    <string name="upload_failed_retry">Upload failed. Files remain queued for retry; check the connection, account, quota and destination.</string>
+    <string name="upload_save_choice">Save upload choice</string>
+    <string name="upload_choice_intro">Choose before continuing. Ordinary MP4 uploads work without a recipient key. Recipient encryption requires a key. Without an explicit choice, nothing is uploaded.</string>
+    <string name="upload_checking">Checking uploads…</string>
+    <string name="upload_fix_setup">Resolve upload problem</string>
+    <string name="upload_retry">Retry uploads now</string>
+    <string name="upload_blocked_title">Uploads are not ready</string>
+    <string name="upload_local_warning">You can record locally now, but there is no confirmed backup outside this phone. Queued files will be retried once the upload requirements are met.</string>
+    <string name="upload_record_local">Record locally for now</string>
+    <string name="capture_checking">Checking recording…</string>
+    <string name="capture_starting">Starting — waiting for camera/microphone data</string>
+    <string name="capture_live_av">Recording — video and audio are arriving</string>
+    <string name="capture_live_audio">Recording — audio is arriving</string>
+    <string name="capture_missing_video">Video missing — only audio is arriving</string>
+    <string name="capture_missing_audio">Audio missing — only video is arriving</string>
+    <string name="capture_stalled">Recording stalled — no recent camera/microphone data</string>
+    <string name="capture_stopping">Stopping — saving the final segment…</string>
+    <string name="capture_saved_segments">Segments saved to the local queue this session: %1$d</string>
+    <string name="upload_sending">Sending/checking a file — delivery is not yet confirmed</string>
+    <string name="upload_waiting_worker">Files queued — waiting for an upload attempt</string>
+    <string name="upload_saved_saf">Queue empty. Files saved to the selected folder; cloud synchronization is not confirmed.</string>
+    <string name="upload_verified">Queue empty. The server accepted the sent files.</string>
+    <string name="upload_waiting_segment">Waiting for the first completed segment to upload</string>
+    <string name="upload_no_receipt">No files queued. No delivery confirmed since the app process started.</string>
+    <string name="upload_queue_detail">Waiting: %1$d files (%2$.1f MB) · Confirmed since app restart: %3$d files</string>
+    <string name="upload_status_unknown">Cannot confirm upload status. Do not assume files have arrived.</string>
+    <string name="upload_open_status">Tap to check upload status and pending files.</string>
+    <string name="calib_preview_privacy">A preview from each passing resolution is stored encrypted inside the app. Test clips are deleted; previews are never uploaded or added to your gallery. Testing stops when you leave this screen.</string>
+    <string name="calib_view_frame">View frame</string>
+    <string name="calib_use_default">Use as default</string>
+    <string name="calib_is_default">Default resolution</string>
+    <string name="calib_use_auto">Use full native reference resolution</string>
+    <string name="calib_default_auto">Default: full native reference resolution</string>
+    <string name="calib_default_size">Native recording: %1$d × %2$d</string>
+    <string name="calib_default_saved">%1$d × %2$d saved for future recordings.</string>
+    <string name="calib_clear_previews">Delete saved preview frames</string>
+    <string name="calib_not_tested">Not tested</string>
+    <string name="calib_preview_stale">Saved frame is from an earlier test. Run the test again before choosing this resolution.</string>
+    <string name="calib_pass_preview">Passed · %1$d frames · %2$.0f fps · preview saved</string>
+    <string name="calib_save_failed">Could not save the default resolution. Try again.</string>
+    <string name="calib_frame_description">Recorded preview at %1$d × %2$d</string>
+    <string name="calib_frame_help">This is a frame from native camera-to-encoder capture. Only this preview is resized for the screen. The video itself is not resized or padded by the app. Compare all four scene edges against the reference while keeping the phone still.</string>
+    <string name="calib_settings_help">The default uses the largest full-aspect native video size at the normal frame rate, with no added resizing. Compare test frames before choosing a smaller size.</string>
+    <string name="set_preset_help">Video goes directly from the camera to the encoder. No app scaling, padding, frame dropping or interpolation. Presets change camera FPS and automatic video bitrate, never audio. The largest compatible native full-aspect mode is the reference. A smaller native mode requires a frame comparison in calibration. Changes to FPS or camera settings invalidate that comparison and restore the reference resolution. Battery savings depend on the phone and must be measured.</string>
+    <string name="camera_backend_title">Camera compatibility options</string>
+    <string name="camera_backend_current">Camera2 · default</string>
+    <string name="camera_backend_experimental">CameraX · experimental</string>
+    <string name="camera_backend_help">CameraX uses the same continuous encoder and segment writer. Compatibility testing is still pending. Save, then run camera calibration before a test recording. Do not rely on this experimental option for critical evidence yet. If it fails, stop recording and select Camera2; switching is never silent.</string>
+    <string name="camera_backend_failed">The camera system could not maintain capture. Stop, check the saved segments, and try Camera2 or recalibrate. Video may be missing.</string>
+    <string name="capture_measured_fps">%1$s · target %2$d fps · measured %3$.1f fps · %4$d × %5$d</string>
+    <string name="measurement_title">Recording measurements</string>
+    <string name="measurement_unknown">unavailable</string>
+    <string name="measurement_none">No completed recording measurements yet. Record and stop normally to save a report.</string>
+    <string name="measurement_plugged">Connected to power at a measurement endpoint</string>
+    <string name="measurement_unplugged">Unplugged at both measurement endpoints</string>
+    <string name="measurement_help">The latest completed session is kept for each camera system and profile, encrypted on this phone. FPS is the session average of encoded video timestamps. Gaps are diagnostic clues, not proof of missing frames. Traffic is all app traffic during the session, including retries and verification; later uploads and traffic from a separate SAF provider are excluded. It is not a cloud-delivery receipt. Battery percentages are coarse and temperatures are battery readings. Compare repeated 10–15 minute unplugged sessions with the same lighting, screen state, network and upload settings. No battery-life forecast is made.</string>
+    <string name="measurement_record">%1$s — %2$s\nDuration: %3$s s · %4$d × %5$d\nFPS: target %6$d / measured %7$s\nLargest frame gap: %8$s ms · non-increasing timestamps: %9$d\nEncoded media: %10$s MB\nApp traffic: sent %11$s MB / received %12$s MB\nBattery: %13$s → %14$s %%\nBattery temperature: %15$s → %16$s °C\n%17$s</string>
+    <string name="fail_full_view">The native full-view mode is unavailable or failed. Check camera calibration. The app will not resize or switch to a cropped fallback.</string>
+    <string name="calib_source_help">First test the reference and compare it with the normal 1× view in the Camera app. Keep the phone still when testing smaller sizes. To use one, compare both saved frames and confirm all four scene edges are preserved. Changing the frame rate or camera settings requires a new comparison.</string>
+    <string name="calib_source_apply">Apply camera source</string>
+    <string name="set_preset_minimum">Minimum frame rate · same native resolution · 10 fps</string>
+    <string name="native_fps_unavailable">This camera does not advertise a native %1$d fps mode with a minimum of 10 fps. Select an available rate in Settings. No faster capture with frame dropping will be substituted.</string>
+    <string name="native_fps_below_minimum">The camera is delivering fewer than 10 fps. Check lighting, heat and camera settings; the requested minimum is not being sustained.</string>
+    <string name="native_rates_help">Advertised native FPS choices: %1$s. Unavailable presets are disabled. Exposure or heat can still lower the actual rate; check measured FPS. Savings are not guaranteed.</string>
+    <string name="native_compare_required">Test the full-resolution reference and this mode with the current settings before comparing.</string>
+    <string name="native_reference">Full-resolution reference</string>
+    <string name="native_candidate">Smaller native candidate</string>
+    <string name="native_compare_title">Does the whole scene remain visible?</string>
+    <string name="native_compare_help">Confirm only if the phone stayed still and the same top, bottom, left and right scene edges are visible in both frames. If unsure or any edge is missing, cancel and keep the full-resolution reference. This is your visual confirmation, not an automatic optical verification.</string>
+    <string name="native_confirm_same_view">Same full view — use this mode</string>
+    <string name="native_rate_fixed">%1$d FPS</string>
+    <string name="native_rate_variable">%1$d–%2$d FPS (variable)</string>
+    <string name="native_rate_normal">%1$s · Normal</string>
+    <string name="native_rates_simple">Only native frame rates supported at this resolution are shown (minimum 10 FPS). Fewer frames can reduce battery and data use; the view and audio stay the same. Savings vary by phone.</string>
+    <string name="camera_view_title">Camera view</string>
+    <string name="settings_hide_details">Hide: %1$s</string>
+    <string name="settings_advanced_video">Advanced video settings</string>
+    <string name="settings_audio_unchanged">Video uses H.264. Changing the frame rate leaves audio settings unchanged.</string>
+    <string name="settings_auto_bitrate">Adjust video bitrate automatically (recommended)</string>
+    <string name="evidence_folder_help">Videos go directly into the chosen folder. Proofs, timestamps and telemetry go into its Evidence subfolder, created automatically. Keep both when copying or sharing evidence.</string>
+    <string name="bitrate_title">Video bitrate</string>
+    <string name="ob_bitrate_title">Video size and detail</string>
+    <string name="bitrate_auto">Automatic (recommended)</string>
+    <string name="bitrate_rate">%1$d kbps</string>
+    <string name="bitrate_custom">Choose a value…</string>
+    <string name="bitrate_legacy">Keep existing per-frame setting</string>
+    <string name="bitrate_custom_hint">Video bitrate in kbps (200–50000)</string>
+    <string name="bitrate_help">Lower bitrate means smaller uploads, but less detail, especially in motion. It keeps the same camera view, resolution, frame rate and audio. Battery savings are not guaranteed. Changes apply to your next recording.</string>
+    <string name="bitrate_auto_help">Automatic bitrate follows resolution, frame rate and quality. A fixed value is a target, not an exact file-size limit; the phone must support it.</string>
+    <string name="bitrate_estimate">About %1$.1f MB/min of video at the target rate, plus audio and metadata. Actual size varies with the scene and encoder.</string>
+    <string name="bitrate_invalid">Enter a whole number from 200 to 50000 kbps.</string>
+    <string name="bitrate_unsupported">This encoder cannot use %1$d kbps. Its supported range is %2$d–%3$d kbps. Choose another bitrate in Settings.</string>
+    <string name="bitrate_mode_unsupported">This encoder does not support target bitrate control. Recording could not start.</string>
+    <string name="measurement_bitrate">Video bitrate: target %1$s kbps; measured %2$s kbps (audio excluded).</string>
+    <string name="camera_preview">Camera view</string>
+    <string name="preview_starting">Opening camera…</string>
+    <string name="preview_permission">Allow camera access to see the live view.</string>
+    <string name="preview_allow_camera">Allow camera access</string>
+    <string name="preview_unavailable">Camera view unavailable. Check recording status below.</string>
+    <string name="set_enable_audio">Record audio</string>
+    <string name="audio_option_help">Choose before starting. When off, the microphone is not used and videos have no audio track.</string>
+    <string name="capture_select_track">Enable video or audio before recording.</string>
+    <string name="capture_live_video">Recording video · audio disabled</string>
+    <string name="flash_on">Turn flash on while recording</string>
+    <string name="flash_off">Turn flash off</string>
+    <string name="flash_unavailable">Flash unavailable</string>
+    <string name="flash_failed">Could not change the flash. Try again.</string>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <string name="recovery_running">Recording was interrupted. Recovering saved footage… Please wait.</string>
+    <string name="recovery_failed">Some footage still needs recovery. Tap Retry upload. If this continues, save the available recordings and seek technical help; do not uninstall the app.</string>
+    <string name="recovery_interrupted">Recording was interrupted. Saved footage has been recovered where possible. The final moments may be missing. Tap Record to start again.</string>
+    <string name="capture_storage_low">Not enough free space to record safely. Recording has stopped or cannot start. Free space in other apps; saved footage here is kept.</string>
+    <string name="capture_buffer_full">Recording stopped because the phone could not save video quickly enough. Saved footage is kept. Let the phone cool down, then try again.</string>
+    <string name="capture_journal_failed">Recording stopped because footage could not be saved safely. Saved footage is kept. Free some space and try again; do not uninstall the app.</string>
+    <string name="capture_audio_timing_failed">Sound recording fell behind. Recording has stopped to prevent unsynchronized clips. Saved footage is retained. Before relying on another recording, make a test clip and check that sound and picture stay synchronized.</string>
+    <string name="adaptive_bitrate_setting">Automatically reduce video size when uploads fall behind (default minimum 1.5 Mb/s)</string>
+    <string name="adaptive_bitrate_live">Automatic video bitrate: %1$d kb/s</string>
+    <string name="adaptive_bitrate_unavailable">Automatic bitrate is unavailable on this phone; recording continues at the configured rate.</string>
+    <string name="capture_lock_phone">Recording has started. You can lock the phone with its side button.</string>
+</resources>

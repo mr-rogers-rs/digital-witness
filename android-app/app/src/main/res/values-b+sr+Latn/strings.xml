@@ -1,0 +1,686 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Serbian Latin localization. Keep terminology and safety meanings aligned
+     with values/strings.xml. Device layout and native-speaker review remain
+     separate release checks; this file does not claim either was completed. -->
+<resources>
+
+    <!-- ══ Prezentacija / priča za pokriće ════════════════════════════════ -->
+    <string name="app_name">Terenski snimač</string>
+    <string name="disguise_app_name">Kalkulator</string>
+
+    <string name="notif_title_honest">Terenski snimač</string>
+    <string name="notif_title_covert">Sistem</string>
+    <string name="notif_text_honest">Snimanje u toku</string>
+    <string name="notif_text_covert">Sinhronizacija u pozadini</string>
+    <string name="notif_alert_title_honest">Proverite snimanje</string>
+    <string name="notif_alert_title_covert">Sinhronizacija pauzirana</string>
+    <string name="notif_alert_text">Dodirnite da otvorite</string>
+    <string name="notif_channel_honest">Snimanje</string>
+    <string name="notif_channel_covert">Sinhronizacija u pozadini</string>
+    <string name="notif_channel_desc_honest">Status snimanja</string>
+    <string name="notif_channel_desc_covert">Sistemska obrada u pozadini</string>
+
+    <!-- ══ Ekran za zaključavanje ═════════════════════════════════════════ -->
+    <string name="lock_subtitle">Unesite PIN za otključavanje</string>
+    <!-- SAFETY -->
+    <string name="lock_wait_seconds">Previše pokušaja. Sačekajte %1$d s</string>
+    <string name="lock_threshold_wiping">Dostignut je dozvoljeni broj pokušaja. Brisanje…</string>
+    <string name="lock_incorrect_locked">Netačan PIN. Pokušajte ponovo za %1$d s</string>
+    <string name="lock_incorrect_count">Netačan PIN. Broj pokušaja: %1$d</string>
+    <string name="lock_incorrect">Netačan PIN</string>
+
+    <string name="pin_setup_title">Postavite PIN aplikacije</string>
+    <string name="pin_setup_message">Izaberite PIN koji štiti aplikaciju. Unosićete ga svaki put kada otvorite snimač.\n\nMora imati najmanje 4 cifre i ne sme biti uobičajen niz.</string>
+    <string name="pin_setup_hint">PIN od najmanje 4 cifre</string>
+    <string name="pin_setup_confirm">Postavi PIN</string>
+    <string name="pin_error_too_short">Unesite najmanje 4 cifre</string>
+    <string name="pin_error_weak">Ovaj PIN je lako pogoditi</string>
+    <string name="pin_set_toast">PIN je postavljen</string>
+
+    <!-- ══ Maska kalkulatora ══════════════════════════════════════════════ -->
+    <string name="calc_code_setup_title">Postavite kod za otključavanje</string>
+    <string name="calc_code_setup_message">Izaberite tajni niz cifara za otključavanje aplikacije. Ukucajte te cifre na kalkulatoru pa pritisnite = da otključate.\n\nMora imati najmanje 4 cifre i ne sme biti uobičajen niz.</string>
+    <string name="calc_code_setup_hint">Kod od najmanje 4 cifre</string>
+    <string name="calc_code_setup_confirm">Postavi kod</string>
+    <string name="calc_code_error_weak">Ovaj kod je lako pogoditi. Izaberite manje očigledan niz cifara.</string>
+    <string name="calc_code_set_toast">Kod za otključavanje je postavljen</string>
+    <string name="calc_wait_seconds">Sačekajte %1$d s</string>
+    <string name="calc_locked_seconds">Pokušajte ponovo za %1$d s</string>
+
+    <!-- ══ Početni ekran ══════════════════════════════════════════════════ -->
+    <string name="mode_anonymous">Anonimni režim</string>
+    <string name="mode_evidence">Režim za dokaze</string>
+    <string name="status_recording">Snimanje je u toku</string>
+    <string name="status_idle">Snimanje nije pokrenuto</string>
+    <string name="action_start_recording">Snimaj</string>
+    <string name="action_stop_recording">Zaustavi snimanje</string>
+    <string name="section_backup">Rezervna kopija</string>
+    <string name="backup_none">Odredište nije podešeno</string>
+    <string name="backup_nextcloud">Nextcloud</string>
+    <string name="backup_saf">Izabrana fascikla</string>
+    <string name="backup_queue_size">Čeka slanje (šifrovano): %1$.1f MB</string>
+    <string name="action_setup_nextcloud">Podesi Nextcloud</string>
+    <string name="action_settings">Podešavanja</string>
+    <string name="action_panic_wipe">Hitno brisanje</string>
+    <string name="error_permissions_denied">Odbijene dozvole: %1$s</string>
+    <string name="error_generic">Greška: %1$s</string>
+    <string name="error_recording_failed">Snimanje nije uspelo: %1$s</string>
+
+    <!-- SAFETY: nepovratno uništavanje podataka -->
+    <string name="panic_title">Obrisati podatke aplikacije?</string>
+    <string name="panic_message">Snimanje se zaustavlja, ključevi za šifrovanje ove aplikacije uništavaju se, a aplikacija pokušava da obriše lokalne snimke i datoteke za proveru.\n\nKopije u izabranim fasciklama (SAF), oblaku i drugim rezervnim kopijama ostaju. Potpuno uklanjanje tragova iz memorije uređaja nije moguće garantovati.\n\nOvo ne može da se poništi.</string>
+    <string name="panic_confirm">Pokreni brisanje</string>
+    <string name="action_cancel">Otkaži</string>
+    <string name="panic_done_toast">Obrađeno datoteka za brisanje: %1$d</string>
+    <string name="uninstall_title">Deinstalirati aplikaciju?</string>
+    <string name="uninstall_message">Želite li da deinstalirate aplikaciju? Time se ne brišu kopije van aplikacije i ne garantuje uklanjanje svih tragova.</string>
+    <string name="uninstall_confirm">Deinstaliraj</string>
+    <string name="uninstall_keep">Zadrži aplikaciju</string>
+
+    <string name="oem_guide_title">Podešavanje snimanja u pozadini</string>
+    <string name="oem_guide_suffix">\n\nNazivi i položaj ovih opcija zavise od verzije sistema. Proverite rad sa ugašenim ekranom: sistem može da prekine snimanje u pozadini.</string>
+    <string name="oem_guide_open">Otvori podešavanja</string>
+    <string name="oem_guide_later">Kasnije</string>
+
+    <!-- ══ Greške pri snimanju ════════════════════════════════════════════
+         SAFETY: ovo javlja korisniku da dokaz možda nije sačuvan. -->
+    <string name="fail_camera_title">Greška kamere</string>
+    <string name="fail_stalled_title">Snimanje je zastalo</string>
+    <string name="fail_stalled_body">Ne stižu podaci sa kamere ni mikrofona. Proverite dozvole.</string>
+    <string name="fail_mic_title">Mikrofon nije dostupan</string>
+    <string name="fail_mic_body">Snima se samo slika. Proverite dozvolu za mikrofon i da li ga koristi druga aplikacija.</string>
+    <string name="fail_upload_title">Slanje nije uspelo</string>
+    <string name="fail_upload_body">Slanje u izabranu fasciklu nije uspelo. Proverite dozvolu za pristup fascikli.</string>
+    <string name="fail_encrypt_title">Šifrovanje nije uspelo</string>
+    <string name="fail_encrypt_body">Segment je zadržan lokalno radi oporavka</string>
+    <string name="fail_recording_title">Greška pri snimanju</string>
+    <string name="fail_recording_body">Obrada segmenta nije uspela: %1$s</string>
+    <string name="fail_muxer_title">Snimanje nije uspelo</string>
+    <string name="fail_muxer_body">Snimak nije sačuvan zbog greške pri spajanju slike i zvuka.</string>
+
+    <!-- ══ Uputstva za proizvođače uređaja ════════════════════════════════ -->
+    <string name="oem_xiaomi">Prepoznat je Xiaomi/MIUI uređaj. Za pouzdano snimanje:\n\n1. Idite na Podešavanja → Aplikacije → Upravljanje aplikacijama → %1$s\n2. Uključite \"Automatsko pokretanje\"\n3. U \"Štednja baterije\" izaberite \"Bez ograničenja\"\n4. Zaključajte aplikaciju u Nedavnim aplikacijama (prevucite nadole po kartici)</string>
+    <string name="oem_samsung">Prepoznat je Samsung uređaj. Za pouzdano snimanje:\n\n1. Idite na Podešavanja → Baterija → Ograničenja korišćenja u pozadini\n2. Dodajte %1$s u \"Aplikacije koje nikad ne spavaju\"\n3. Idite na Podešavanja → Aplikacije → %1$s → Baterija → Bez ograničenja</string>
+    <string name="oem_huawei">Prepoznat je Huawei/EMUI uređaj. Za pouzdano snimanje:\n\n1. Idite na Podešavanja → Baterija → Pokretanje aplikacija\n2. Pronađite %1$s i postavite na \"Ručno upravljanje\"\n3. Uključite automatsko pokretanje, sekundarno pokretanje i rad u pozadini</string>
+    <string name="oem_oppo">Prepoznat je OPPO/Realme/OnePlus uređaj. Za pouzdano snimanje:\n\n1. Idite na Podešavanja → Baterija → Upravljanje baterijom aplikacija\n2. Postavite %1$s na \"Dozvoli aktivnost u pozadini\"\n3. Zaključajte aplikaciju u Nedavnim aplikacijama (prevucite nadole po kartici)</string>
+
+    <!-- ══ Kalibracija kamere ═════════════════════════════════════════════ -->
+    <string name="calib_title">Provera kamere</string>
+    <string name="calib_no_permission">Potrebna je dozvola za kameru. Vratite se i prvo pokrenite snimanje.</string>
+    <string name="calib_no_info">Nije moguće očitati podatke o kameri.</string>
+    <string name="calib_sensor">Senzor: %1$dx%2$d  (%3$s:1)</string>
+    <string name="calib_intro">Svaka proba snima %1$d s videa sa sačuvanim podešavanjima snimanja. Rezolucija prolazi proveru tek kada video može da se prikaže i kada se sačuva kadar za pregled.</string>
+    <string name="calib_test_all">Proveri sve rezolucije</string>
+    <string name="calib_test">Proveri</string>
+    <string name="calib_testing">Provera…</string>
+    <string name="calib_footnote">Referenca je najveća video-rezolucija sa odnosom stranica senzora pri najvišoj podržanoj standardnoj brzini, do 30 kadrova/s. Broj megapiksela za fotografije ne određuje rezoluciju videa. Odbacite svaki manji režim koji izostavlja neku ivicu scene.</string>
+    <string name="calib_err_no_permission">Nema dozvole</string>
+    <string name="calib_err_timeout">Kamera nije odgovorila na vreme</string>
+    <string name="calib_err_camera">Greška kamere %1$d</string>
+    <string name="calib_err_session_timeout">Vreme za pokretanje snimanja je isteklo</string>
+    <string name="calib_err_session_failed">Pokretanje snimanja nije uspelo</string>
+
+    <!-- ══ Nextcloud čarobnjak ════════════════════════════════════════════ -->
+    <string name="nc_title">Povežite Nextcloud</string>
+    <string name="nc_subtitle">Šaljite snimke na izabrani server. Način šifrovanja pri slanju bira se odvojeno u podešavanjima.</string>
+    <string name="nc_note">Koristite posebnu lozinku za aplikaciju, koju možete naknadno opozvati. Ne unosite lozinku za prijavu na nalog. Ova verzija zahteva HTTPS.</string>
+    <string name="nc_server_url">Adresa servera</string>
+    <string name="nc_server_url_hint">https://cloud.primer.com ili https://cloud.primer.com/nextcloud</string>
+    <string name="nc_username">Korisničko ime</string>
+    <string name="nc_username_hint">Vaše Nextcloud korisničko ime</string>
+    <string name="nc_app_password">Lozinka za aplikaciju</string>
+    <string name="nc_app_password_hint">Podešavanja → Bezbednost → Napravi lozinku za aplikaciju</string>
+    <string name="nc_app_password_help">Kako da dobijem lozinku za aplikaciju?</string>
+    <string name="nc_folder">Odredišna fascikla</string>
+    <string name="nc_advanced_collapsed">▸  Napredno (otisak sertifikata, veličina dela)</string>
+    <string name="nc_advanced_expanded">▾  Napredno (otisak sertifikata, veličina dela)</string>
+    <string name="nc_pin_explain">Ako želite dodatnu proveru HTTPS veze, unesite SHA-256 otisak javnog ključa servera koji ste proverili nezavisnim putem.</string>
+    <string name="nc_cert_pin">Otisak javnog ključa (SHA-256 SPKI)</string>
+    <string name="nc_cert_pin_hint">Nije obavezno: SHA-256 SPKI otisak proveren nezavisnim putem</string>
+    <string name="nc_fetch_fingerprint">Preuzmi i prikaži otisak servera</string>
+    <string name="nc_chunk_size">Veličina dela za slanje (MB)</string>
+    <string name="nc_test">Proveri vezu</string>
+    <string name="nc_save">Sačuvaj i koristi Nextcloud</string>
+    <string name="nc_need_fields">Prvo unesite adresu servera, korisničko ime i lozinku za aplikaciju.</string>
+    <string name="nc_testing">Provera veze…</string>
+    <string name="nc_connected">✓ Veza je uspostavljena. Server je prihvatio lozinku za aplikaciju.</string>
+    <string name="nc_failed">✗ Povezivanje nije uspelo. Proverite HTTPS adresu, korisničko ime, lozinku za aplikaciju i mrežna podešavanja.</string>
+    <string name="nc_fetching_cert">Preuzimanje sertifikata servera…</string>
+    <string name="nc_fingerprint_title">Otisak sertifikata servera</string>
+    <!-- SAFETY: provera van mreže — pin ne vredi ništa ako korisnik prihvati
+         ono što mu mreža ponudi. -->
+    <string name="nc_fingerprint_message">sha256/%1$s\n\nPre čuvanja uporedite ovaj otisak sa vrednošću dobijenom nezavisnim putem, na primer preko konzole servera. Samo preuzimanje otiska ne potvrđuje da je server pouzdan.</string>
+    <string name="nc_no_cert">Nije moguće preuzeti TLS sertifikat. Proverite HTTPS adresu i mrežna podešavanja.</string>
+    <string name="nc_required_fields">Adresa servera, korisničko ime i lozinka za aplikaciju su obavezni</string>
+    <string name="nc_saved">Nextcloud podešavanja su sačuvana</string>
+    <string name="nc_help_title">Kako da napravite lozinku za Nextcloud aplikaciju</string>
+    <string name="nc_help_steps">1. Prijavite se na Nextcloud u pregledaču.\n2. Otvorite meni svog naloga → Podešavanja → Bezbednost.\n3. U odeljku „Uređaji i sesije” unesite naziv, na primer „Rezervne kopije”.\n4. Izaberite „Napravi novu lozinku za aplikaciju”.\n5. Kopirajte dobijenu lozinku i nalepite je u aplikaciju. Prikazuje se samo jednom.\n\nOva lozinka je odvojena od lozinke za prijavu. Možete je opozvati ako izgubite telefon ili više ne želite da aplikacija pristupa nalogu. Opoziv ne briše već poslate datoteke. Nazivi opcija zavise od jezika i verzije Nextcloud-a.</string>
+    <string name="nc_help_open_security">Otvori bezbednosna podešavanja</string>
+    <string name="action_close">Zatvori</string>
+    <string name="action_ok">U redu</string>
+    <string name="no_browser">Nema dostupnog pregledača</string>
+
+    <!-- ══ Prvo pokretanje ════════════════════════════════════════════════ -->
+    <string name="ob_step_counter">Korak %1$d od %2$d</string>
+    <string name="action_continue">Nastavi</string>
+    <string name="action_back">Nazad</string>
+
+    <string name="ob_welcome_body">Snimajte sliku i zvuk uz podatke koji pomažu da se kasnije proveri da li je snimak izmenjen. Ti podaci sami po sebi ne potvrđuju istinitost događaja, tačno vreme ni potpunost snimka.</string>
+    <string name="ob_welcome_b1_t">Otkriva izmene</string>
+    <string name="ob_welcome_b1_d">Kontrolne vrednosti i digitalni potpisi pomažu da se otkriju izmene preuzetih snimaka. Za proveru potpunosti potrebna je nezavisno sačuvana kontrolna vrednost kojoj verujete.</string>
+    <string name="ob_welcome_b2_t">Lokalno šifrovanje</string>
+    <string name="ob_welcome_b2_d">Snimci se šifruju na uređaju i mogu se slati preko Tor mreže.</string>
+    <string name="ob_welcome_b3_t">Vi birate odredište</string>
+    <string name="ob_welcome_b3_d">Snimke možete slati u izabranu fasciklu, na svoj Nextcloud server ili u drugi podržani servis.</string>
+    <string name="ob_get_started">Započni podešavanje</string>
+
+    <string name="ob_how_title">Kako aplikacija radi</string>
+    <string name="ob_how_body">Tokom snimanja aplikacija obrađuje kratke segmente. Za slanje prvo podesite odredište, šifrovanje i mrežnu vezu.</string>
+    <string name="ob_how_1_t">1 · Snimanje</string>
+    <string name="ob_how_1_d">Slika i zvuk čuvaju se u kratkim segmentima.</string>
+    <string name="ob_how_2_t">2 · Provera snimka</string>
+    <string name="ob_how_2_d">Segmenti se povezuju heš lancem. Aplikacija traži vremenske potvrde kada mrežna podešavanja to dozvoljavaju.</string>
+    <string name="ob_how_3_t">3 · Zaštita</string>
+    <string name="ob_how_3_d">Završeni segmenti šifruju se za čuvanje na uređaju. Tokom obrade postoje privremene nešifrovane datoteke.</string>
+    <string name="ob_how_4_t">4 · Rezervna kopija</string>
+    <string name="ob_how_4_d">Snimci se šalju prema izabranom odredištu, načinu šifrovanja i mrežnim podešavanjima.</string>
+    <string name="ob_how_note">Alat za proveru omogućava proveru integriteta i dostupnih vremenskih potvrda. Sam po sebi ne potvrđuje istinitost događaja, tačno vreme snimanja ni potpunost snimka.</string>
+
+    <string name="ob_pin_title">Postavite svoj PIN</string>
+    <string name="ob_pin_body">Unosićete ga svaki put kada otvorite aplikaciju. Izaberite najmanje 4 cifre koje nisu očigledan niz.</string>
+    <string name="ob_pin_label">PIN</string>
+    <string name="ob_pin_hint">Najmanje 4 cifre</string>
+    <string name="ob_pin_confirm_label">Potvrdite PIN</string>
+    <string name="ob_pin_confirm_hint">Ponovo unesite svoj PIN</string>
+    <!-- SAFETY: prvo pominjanje koda za slučaj prinude. -->
+    <string name="ob_pin_tip">Kasnije u podešavanjima možete dodati kod za slučaj prinude. Njegov unos pokreće uništavanje ključeva i lokalno brisanje; kopije u oblaku i SAF fasciklama ostaju.</string>
+    <string name="ob_pin_button">Postavi PIN i nastavi</string>
+    <string name="ob_pin_err_short">PIN mora imati najmanje 4 cifre</string>
+    <string name="ob_pin_err_weak">Ovaj PIN je lako pogoditi</string>
+    <string name="ob_pin_err_mismatch">Uneti PIN-ovi se ne poklapaju</string>
+
+    <string name="ob_perm_title">Kamera i mikrofon</string>
+    <string name="ob_perm_body">Za video je potreban pristup kameri. Pristup mikrofonu je potreban samo kada snimate zvuk. Stalno obaveštenje pokazuje da je snimanje u toku.</string>
+    <string name="perm_camera">Kamera</string>
+    <string name="perm_microphone">Mikrofon</string>
+    <string name="perm_notifications">Obaveštenja</string>
+    <string name="perm_granted">Odobreno ✓</string>
+    <string name="perm_needed">Potrebno</string>
+    <string name="ob_perm_ok_note">Sve je spremno. Ovo možete promeniti u bilo kom trenutku u sistemskim podešavanjima.</string>
+    <string name="ob_perm_grant">Odobri dozvole</string>
+    <string name="ob_perm_open_settings">Otvori podešavanja aplikacije</string>
+
+    <string name="ob_mode_title">Režim snimanja</string>
+    <string name="ob_mode_body">Ovaj izbor određuje koji dodatni podaci se čuvaju uz snimak. Možete ga promeniti kasnije.</string>
+    <!-- SAFETY: izbor između anonimnosti i dokazne snage. Pogrešan prevod ovde
+         može navesti nekoga da izabere režim koji ga identifikuje. -->
+    <string name="ob_mode_anon_title">Anonimni režim  ·  preporučeno</string>
+    <string name="ob_mode_anon_desc">Smanjuje količinu podataka o uređaju, mreži i jeziku i isključuje GPS. Sadržaj snimka i preostali metapodaci ipak mogu da vas identifikuju. Nepotpisani heš lanac može ponovo da se izračuna.</string>
+    <string name="ob_mode_ev_title">Režim za dokaze</string>
+    <string name="ob_mode_ev_desc">Čuva dodatne podatke o uređaju i okruženju i potpisuje zapise za proveru. Ti podaci mogu da identifikuju uređaj, a uz uključen GPS i lokaciju. To ne garantuje prihvatanje snimka kao dokaza na sudu.</string>
+
+    <string name="ob_backup_title">Gde se čuvaju kopije snimaka</string>
+    <string name="ob_backup_body">Izaberite gde želite da šaljete kopije. Na ovom ekranu birate i slanje običnih datoteka ili šifrovanje za primaoca.</string>
+    <string name="ob_backup_nc_configured">Nextcloud  ·  podešeno ✓</string>
+    <string name="ob_backup_nc_recommended">Nextcloud  ·  preporučeno</string>
+    <string name="ob_backup_nc_desc_review">Slanje na izabrani Nextcloud server preko HTTPS veze. Dodirnite da pregledate podešavanja.</string>
+    <string name="ob_backup_nc_desc_setup">Povežite Nextcloud server uz vođeno podešavanje i proveru HTTPS veze.</string>
+    <string name="ob_backup_saf_chosen">Fascikla za kopije snimaka  ·  izabrana ✓</string>
+    <string name="ob_backup_saf">Izaberi fasciklu za kopije snimaka</string>
+    <string name="ob_backup_saf_desc">Izaberite fasciklu pomoću sistemskog birača datoteka. Servis u oblaku može se koristiti samo ako njegova aplikacija omogućava izbor fascikle za upis.</string>
+    <string name="ob_backup_note">Ovo možete preskočiti i podesiti kasnije. Snimci koji čekaju slanje ostaju šifrovani na uređaju, dok ima slobodnog prostora.</string>
+    <string name="ob_skip">Preskoči za sada</string>
+
+    <string name="ob_net_title">Veza za slanje snimaka</string>
+    <string name="ob_net_body">Mrežna veza i šifrovanje datoteka podešavaju se odvojeno. Izabrana veza utiče na to šta mogu da vide mrežni operator i servis koji čuva snimke.</string>
+    <string name="ob_net_right_now">Trenutno stanje</string>
+    <string name="ob_net_checking">Provera…</string>
+    <!-- SAFETY: opisuju šta svaki izbor mreže krije, a šta ne. Korisnik na
+         osnovu ovog teksta bira koliko je izložen. -->
+    <string name="ob_net_tor_title">Tor  ·  preko aplikacije Orbot</string>
+    <string name="ob_net_tor_desc">Ugrađene veze sa servisima koriste Orbotov posrednik i čekaju ako nije dostupan. Ovo podešavanje ne obuhvata prijavu u pregledaču ni sinhronizaciju drugih aplikacija preko SAF-a. Tor je sporiji i zahteva Orbot.</string>
+    <string name="ob_net_vpn_title">VPN  ·  mora da bude aktivan</string>
+    <string name="ob_net_vpn_desc">Slanje čeka dok Android ne prijavi aktivan VPN. Sami podesite VPN i proverite da li obuhvata ovu aplikaciju. Prisustvo VPN-a ne potvrđuje putanju saobraćaja ni pouzdanost servisa.</string>
+    <string name="ob_net_none_title">Šalji preko dostupne veze</string>
+    <string name="ob_net_none_desc">Snimci se šalju preko dostupne veze. Bez VPN-a ili Tor-a, servis može da vidi vašu javnu IP adresu, a mrežni operator odredište i vreme slanja.</string>
+    <string name="ob_net_note">Datoteke koje čekaju vezu ostaju šifrovane na uređaju. Slobodan prostor je ograničen: pratite koliko datoteka čeka slanje i isprobajte slanje pre upotrebe.</string>
+
+    <string name="ob_orbot">Orbot</string>
+    <string name="ob_orbot_missing">Nije instaliran. Orbot je besplatna aplikacija organizacije Guardian Project koja obezbeđuje Tor vezu koju ovo podešavanje koristi.</string>
+    <string name="ob_orbot_get">Preuzmi Orbot</string>
+    <string name="ob_orbot_installed">Orbot je instaliran. Otvorite ga, pokrenite vezu i vratite se ovde. Status se proverava automatski.</string>
+    <string name="ob_orbot_open">Otvori Orbot</string>
+    <string name="ob_orbot_recheck">Proveri ponovo</string>
+    <string name="ob_orbot_no_store">Nema dostupne prodavnice ni pregledača</string>
+    <string name="ob_orbot_cant_open">Nije moguće otvoriti Orbot</string>
+
+    <!-- SAFETY: trenutna procena slanja. -->
+    <string name="ob_net_status_none">Za slanje se koristi dostupna veza. Bez VPN-a ili Tor-a vaša javna IP adresa može biti vidljiva servisu.</string>
+    <string name="ob_net_status_tor_ok">Orbotov posrednik je dostupan. Mrežni uslov za Tor je ispunjen; uspešno slanje zavisi i od odredišta.</string>
+    <string name="ob_net_status_tor_blocked">Slanje je blokirano: izabran je Tor, ali Orbotov posrednik nije dostupan.</string>
+    <string name="ob_net_status_vpn_ok">VPN je prepoznat. Mrežni uslov je ispunjen; uspešno slanje zavisi i od odredišta.</string>
+    <string name="ob_net_status_blocked">Slanje je blokirano: VPN nije prepoznat, a Tor je isključen.</string>
+
+    <string name="ob_done_title">Osnovno podešavanje je završeno</string>
+    <string name="ob_done_body">Pre prve upotrebe napravite probni snimak i proverite da li kopiju možete da preuzmete i otvorite na drugom uređaju.</string>
+    <string name="ob_sum_mode">Režim snimanja</string>
+    <string name="ob_sum_backup">Rezervna kopija</string>
+    <string name="ob_sum_uploads">Slanje</string>
+    <string name="ob_sum_applock">Zaključavanje aplikacije</string>
+    <string name="ob_mode_anonymous_short">Anonimni režim</string>
+    <string name="ob_mode_evidence_short">Režim za dokaze</string>
+    <string name="ob_dest_none">Nije izabrano — podesite kasnije</string>
+    <string name="ob_uploads_any">Bilo koja veza</string>
+    <string name="ob_uploads_tor">Samo Tor</string>
+    <string name="ob_uploads_vpn">Zahteva VPN</string>
+    <string name="ob_applock_pin_set">PIN je postavljen</string>
+    <string name="ob_done_note">Razmotrite postavljanje koda za slučaj prinude u podešavanjima. Njegov unos pokreće uništavanje ključeva i pokušaj lokalnog brisanja. Kopije u oblaku i SAF fasciklama ostaju; potpuno brisanje nije garantovano.</string>
+    <string name="ob_start">Otvori %1$s</string>
+
+    <!-- ══ Podešavanja ════════════════════════════════════════════════════ -->
+    <string name="set_title">Podešavanja</string>
+    <string name="set_calibrate">Proveri kameru</string>
+
+    <string name="set_quality">Snimanje videa</string>
+    <string name="set_preset_battery">Manje kadrova · ista izvorna rezolucija · 15 kadrova/s</string>
+    <string name="set_preset_balanced">Standardno · izvorna brzina snimanja</string>
+    <string name="set_preset_quality">Viši kvalitet · do 1080p · cilj 30 kadrova/s</string>
+    <string name="set_preset_full">Najveća rezolucija · 30 kadrova/s · veća potrošnja baterije i prostora</string>
+    <string name="set_preset_custom">Prilagođeni izvorni broj kadrova i protok</string>
+    <string name="set_max_height">Maksimalna visina slike (px)</string>
+    <string name="set_max_height_hint">npr. 480, 720, 1080</string>
+    <string name="set_fps">Broj kadrova u sekundi</string>
+    <string name="set_fps_hint">10-60</string>
+    <string name="set_video_bitrate">Protok video-zapisa (kb/s)</string>
+    <string name="set_video_bitrate_hint">npr. 400, 1500, 5000</string>
+    <string name="set_codec">Video-kodek</string>
+    <string name="set_codec_auto">Automatski</string>
+    <string name="set_audio_rate">Frekvencija uzorkovanja zvuka (Hz)</string>
+    <string name="set_audio_bitrate">Protok zvuka (kb/s)</string>
+    <string name="set_audio_bitrate_hint">12-128</string>
+    <string name="set_gop">Razmak između ključnih kadrova (sekunde)</string>
+    <string name="set_gop_hint">1-15</string>
+
+    <string name="set_recording">Snimanje</string>
+    <string name="set_enable_video">Snimi i sliku</string>
+    <string name="set_wakelock">Održavaj procesor aktivnim tokom snimanja</string>
+    <string name="set_segment_len">Dužina segmenta (sekunde)</string>
+    <string name="set_segment_len_hint">podrazumevano 10</string>
+
+    <string name="set_backup">Rezervne kopije i slanje</string>
+    <string name="set_method_saf">Fascikla izabrana na telefonu</string>
+    <string name="set_method_cloud">Direktno slanje u oblak</string>
+    <string name="set_choose_folder">Izaberi fasciklu</string>
+    <string name="set_folder_configured">Fascikla je podešena ✓</string>
+    <string name="set_folder_none">Nijedna fascikla nije izabrana</string>
+    <string name="set_cloud_provider">Servis u oblaku</string>
+    <string name="set_provider_dropbox">Dropbox</string>
+    <string name="set_provider_gdrive">Google Drive</string>
+    <string name="set_provider_webdav">WebDAV</string>
+    <string name="set_provider_nextcloud">Nextcloud (slanje u delovima)</string>
+
+    <!-- SAFETY: upozorenja o jurisdikciji. Govore korisniku koje države mogu
+         zahtevati njegov dokaz i povezati ga sa njim. -->
+    <string name="set_juris_dropbox">Dropbox povezuje poslate datoteke sa vašim nalogom. Pristup servisa podacima i njihovo dostavljanje nadležnim organima zavise od uslova korišćenja i važećih propisa. Ako servis ne sme da čita sadržaj, izaberite šifrovanje za primaoca.</string>
+    <string name="set_juris_gdrive">Google Drive povezuje poslate datoteke i metapodatke sa vašim nalogom. Pristup servisa podacima i njihovo dostavljanje nadležnim organima zavise od uslova korišćenja i važećih propisa. Ako servis ne sme da čita sadržaj, izaberite šifrovanje za primaoca.</string>
+    <string name="set_juris_webdav">WebDAV: proverite ko upravlja serverom i gde se nalazi. HTTPS štiti podatke tokom prenosa; šifrovanje za primaoca zasebno štiti sadržaj datoteka od servera.</string>
+    <string name="set_juris_nextcloud">Nextcloud: izaberite server kome verujete. Koristite HTTPS i lozinku za aplikaciju. Šifrovanje datoteka bira se odvojeno.</string>
+
+    <string name="set_access_token">Pristupni token (OAuth)</string>
+    <string name="set_access_token_hint">Nalepite svoj pristupni token</string>
+    <string name="set_dropbox_key">Dropbox ključ aplikacije</string>
+    <string name="set_dropbox_key_hint">Ključ iz Dropbox App Console</string>
+    <string name="set_dropbox_refresh">Dropbox token za osvežavanje</string>
+    <string name="set_dropbox_refresh_hint">Nalepite svoj token za osvežavanje</string>
+    <string name="set_token_note">Povezivanje sa Dropbox nalogom popunjava tokene i omogućava njihovo obnavljanje. Sam pristupni token važi ograničeno vreme.</string>
+    <string name="set_webdav_url">WebDAV adresa</string>
+    <string name="set_webdav_url_hint">https://host/remote.php/dav/files/user/</string>
+    <string name="set_username">Korisničko ime</string>
+    <string name="set_password">Lozinka</string>
+    <string name="set_nc_guided">Vođeno podešavanje i provera veze</string>
+    <string name="set_advanced_optional">Dodatna podešavanja (nije obavezno)</string>
+    <string name="set_cert_pin_hint">Nije obavezno: SHA-256 SPKI otisak proveren nezavisnim putem</string>
+    <string name="set_help_button">Uputstvo za izabrani servis</string>
+    <string name="set_test_cloud">Proveri vezu sa servisom</string>
+    <string name="set_test_ok">Povezivanje je uspelo ✓</string>
+    <string name="set_test_fail">Povezivanje nije uspelo. Proverite adresu, podatke za prijavu i mrežna podešavanja.</string>
+
+    <string name="set_local_storage">Snimci na uređaju</string>
+    <string name="set_keep_local">Zadrži šifrovane kopije na uređaju posle slanja</string>
+    <string name="set_archive_max">Ograničenje lokalne arhive (MB)</string>
+    <string name="set_archive_max_hint">50-10000</string>
+    <string name="set_storage_usage">Čeka slanje: %1$.1f MB   ·   Arhiva: %2$.1f MB</string>
+
+    <string name="set_security">Bezbednost aplikacije</string>
+    <string name="set_pin_label">PIN aplikacije (ekran za zaključavanje i kalkulator)</string>
+    <string name="set_code_already_set">Kod je postavljen — unesite novi ako želite da ga promenite</string>
+    <string name="set_pin_required_hint">Najmanje 4 cifre (obavezno)</string>
+    <string name="set_duress_label">Kod za slučaj prinude (pokreće tiho brisanje)</string>
+    <string name="set_duress_hint">Najmanje 4 cifre; ostavite prazno da isključite</string>
+    <!-- SAFETY: šta kod za slučaj prinude zapravo radi. -->
+    <string name="set_duress_explain">Unos ovog koda na ekranu za zaključavanje ili kalkulatoru pokreće uništavanje ključeva i lokalno brisanje. Kopije van aplikacije ostaju, a potpuno brisanje nije garantovano. Kod mora da se razlikuje od PIN-a za otključavanje.</string>
+    <string name="set_err_unlock_weak">Kod za otključavanje mora imati najmanje 4 cifre i ne sme biti uobičajen niz</string>
+    <string name="set_err_duress_short">Kod za slučaj prinude mora imati najmanje 4 cifre</string>
+    <string name="set_err_duress_same">Kod za slučaj prinude mora se razlikovati od koda za otključavanje</string>
+    <string name="set_err_duress_weak">Kod za slučaj prinude je lako pogoditi</string>
+
+    <string name="set_disguise">Prikaz aplikacije kao kalkulatora (napredno)</string>
+    <string name="set_disguise_toggle">Dodaj ikonu kalkulatora</string>
+    <!-- SAFETY: ovaj tekst odgovara OD uključivanja opcije. Ne sme zvučati kao
+         preporuka da se uključi. -->
+    <string name="set_disguise_warning">Dodaje drugu ikonu koja izgleda kao kalkulator. Da biste otvorili snimač, unesite PIN, pa pritisnite =.\n\nUPOZORENJE: ovakav prikaz ne skriva aplikaciju od forenzičkih alata ili pregleda telefona. Ako se otkrije da aplikacija služi za prikriveno snimanje, to može da poveća rizik po vas. Uključite ovu opciju samo ako odgovara vašoj proceni rizika.</string>
+
+    <string name="set_mode">Režim snimanja</string>
+    <string name="set_mode_evidence">Režim za dokaze  ·  dodatni podaci o uređaju i okruženju</string>
+    <string name="set_mode_anonymous">Anonimni režim  ·  manje podataka o uređaju, mreži i jeziku</string>
+    <string name="set_mode_explain">Režim za dokaze čuva dodatne podatke o uređaju i okruženju i potpisuje zapise za proveru. Anonimni režim smanjuje količinu podataka koji mogu da vas identifikuju i isključuje GPS. Sadržaj snimka i preostali metapodaci ipak mogu otkriti identitet. Heševi pomažu pri proveri, ali nepotpisani lanac može ponovo da se izračuna. Za proveru potpunosti potrebna je nezavisno sačuvana kontrolna vrednost kojoj verujete.</string>
+
+    <string name="set_location">Lokacija</string>
+    <string name="set_gps_toggle">Sačuvaj GPS koordinate u podacima za proveru</string>
+    <!-- SAFETY -->
+    <string name="set_gps_warning">UPOZORENJE: GPS koordinate otkrivaju lokaciju snimanja. Uključite ih samo ako želite da lokacija bude sačuvana uz snimak. Isključen GPS ne garantuje anonimnost.</string>
+    <string name="set_gps_anon_blocked">GPS je isključen u anonimnom režimu</string>
+    <string name="set_location_denied">Dozvola za lokaciju je odbijena</string>
+
+    <string name="set_network">Mreža i privatnost</string>
+    <string name="set_secure_net">Zahtevaj VPN ili Tor za slanje</string>
+    <string name="set_secure_net_explain">Blokira slanje van uređaja dok izabrani mrežni uslov nije ispunjen. Ako je Tor uključen, njegov posrednik mora biti dostupan; u suprotnom Android mora da prijavi aktivan VPN. Posebno proverite da li VPN obuhvata ovu aplikaciju.</string>
+    <string name="set_tor_toggle">Usmeri saobraćaj aplikacije kroz Tor (zahteva Orbot)</string>
+    <string name="set_tor_explain">Ugrađene veze sa servisima i zahtevi za vremenske potvrde koriste Orbotov SOCKS5 posrednik. Prijava u pregledaču i SAF sinhronizacija drugih aplikacija koriste sopstvena mrežna podešavanja. Ova opcija ne usmerava njihov saobraćaj.</string>
+    <string name="set_check_network">Proveri stanje mreže</string>
+    <string name="set_setup_orbot">Podesi Orbot</string>
+    <string name="set_orbot_install_title">Instalirajte Orbot</string>
+    <string name="set_orbot_install_msg">Za slanje preko Tor-a potreban je Orbot (Guardian Project).\n\n1. Instalirajte Orbot.\n2. Otvorite ga i pokrenite vezu dugmetom Start.\n3. Vratite se u snimač i uključite Tor.\n\nAko koristite VPN umesto Tor-a, Orbot nije potreban. Uključite „Zahtevaj VPN ili Tor za slanje” i proverite da li VPN obuhvata ovu aplikaciju.</string>
+    <string name="set_orbot_install_action">Instaliraj Orbot</string>
+    <string name="set_orbot_cant_store">Nije moguće otvoriti prodavnicu</string>
+    <string name="set_orbot_start_title">Pokrenite Orbot</string>
+    <string name="set_orbot_start_msg">Orbot je instaliran, ali njegov posrednik nije dostupan. Otvorite Orbot i pokrenite vezu.</string>
+    <string name="set_orbot_open">Otvori Orbot</string>
+    <string name="set_orbot_cant_open">Nije moguće otvoriti Orbot</string>
+    <string name="set_tor_connected">Orbotov posrednik je dostupan</string>
+
+    <string name="set_save">Sačuvaj podešavanja</string>
+    <string name="set_fingerprint_msg">sha256/%1$s\n\nPre čuvanja uporedite ovaj otisak sa vrednošću dobijenom nezavisnim putem, na primer preko konzole servera. Samo preuzimanje otiska ne potvrđuje da je server pouzdan.</string>
+    <string name="set_no_cert">Nije moguće preuzeti TLS sertifikat. Proverite HTTPS adresu i mrežna podešavanja.</string>
+
+    <string name="export_title">Šifrovanje datoteka</string>
+    <string name="export_encrypted">Šifruj za primaoca (potreban javni ključ)</string>
+    <string name="export_plaintext">Pošalji nešifrovane snimke</string>
+    <string name="export_explanation">Nešifrovane snimke i metapodatke mogu da čitaju servis i svako ko ima pristup nalogu. HTTPS/Tor i šifrovanje datoteka na telefonu podešavaju se odvojeno. Za otvaranje datoteka šifrovanih za primaoca potreban je njegov privatni ključ.</string>
+    <string name="export_key_hint">Javni RSA ključ primaoca (PEM). Privatni ključ čuvajte van ovog telefona.</string>
+    <string name="export_existing_policy">Datoteke koje već čekaju slanje zadržavaju svoj način šifrovanja i odredište. One za koje izbor nije sačuvan čekaju podešavanje. Tor podešavanje ove aplikacije ne važi za druge aplikacije koje nude fascikle. Za slanje preko Tor-a koristite ugrađenu vezu sa servisom.</string>
+    <string name="export_invalid_key">Unesite ispravan javni RSA ključ (2048–8192 bita) ili izaberite slanje bez šifrovanja.</string>
+    <string name="folder_access_failed">Nije moguće sačuvati dozvolu za pristup ovoj fascikli. Izaberite fasciklu u koju aplikacija može da upisuje datoteke.</string>
+    <string name="settings_recording_active">Zaustavite snimanje pre nego što promenite podešavanja.</string>
+    <string name="dropbox_key_required">Prvo unesite Dropbox ključ aplikacije.</string>
+    <string name="dropbox_auth_intro">Otvorite Dropbox, odobrite pristup i ovde nalepite dobijeni kod. Pregledač koristi sopstvena mrežna podešavanja. Tor podešavanje ove aplikacije ne važi za pregledač.</string>
+    <string name="dropbox_auth_code">Kod za odobrenje pristupa</string>
+    <string name="dropbox_auth_open">1. Odobri pristup na Dropbox-u</string>
+    <string name="dropbox_auth_connect">2. Poveži nalog</string>
+    <string name="dropbox_auth_title">Povezivanje sa Dropbox nalogom</string>
+    <string name="dropbox_auth_success">Nalog je povezan. Sačuvajte podešavanja da biste ga koristili.</string>
+    <string name="dropbox_auth_failed">Povezivanje nije uspelo. Proverite mrežna podešavanja i ponovo pokrenite odobravanje pristupa. Moguće je da je kod istekao.</string>
+    <string name="dropbox_connect_browser">Poveži Dropbox nalog u pregledaču</string>
+    <string name="help_dropbox_title">Podešavanje Dropbox-a</string>
+    <string name="help_gdrive_title">Podešavanje Google Drive-a</string>
+    <string name="help_webdav_title">Podešavanje WebDAV veze</string>
+    <string name="help_nextcloud_title">Podešavanje Nextcloud-a</string>
+    <string name="help_cloud_title">Podešavanje servisa u oblaku</string>
+    <string name="help_dropbox_console">Otvori Dropbox konzolu</string>
+    <string name="help_oauth_playground">Otvori OAuth Playground</string>
+    <string name="help_about_nextcloud">O Nextcloud-u</string>
+    <string name="action_open">Otvori</string>
+    <string name="export_status_encrypted">Datoteke se šalju šifrovane za primaoca</string>
+    <string name="export_status_plaintext">Slanje bez šifrovanja: servis može da čita snimke</string>
+    <string name="export_status_unconfigured">Slanje je pauzirano: izaberite šifrovanje pri slanju u podešavanjima</string>
+    <string name="net_vpn_active">VPN je prepoznat</string>
+    <string name="net_vpn_absent">VPN nije prepoznat</string>
+    <string name="net_tor_disabled">Tor je isključen</string>
+    <string name="net_tor_reachable">Orbotov posrednik je dostupan</string>
+    <string name="net_tor_stopped">Tor je uključen; Orbotov posrednik nije dostupan</string>
+    <string name="net_tor_missing">Tor je uključen; Orbot nije instaliran</string>
+    <string name="net_requirement_ok">Mrežni uslov je ispunjen; slanje zavisi i od odredišta</string>
+    <string name="net_blocked_tor">Slanje je blokirano: pokrenite Orbot/Tor</string>
+    <string name="net_blocked_vpn">Slanje je blokirano: pokrenite VPN ili uključite Tor</string>
+    <string name="panic_cleanup_done">Ključevi su uklonjeni i pokrenuto je lokalno brisanje. Brisanje se nastavlja pri ponovnom pokretanju. Kopije van aplikacije ostaju.</string>
+    <string name="panic_cleanup_incomplete">Brisanje nije završeno. Zatvorite aplikaciju i ponovo je pokrenite da biste ponovili lokalno brisanje.</string>
+    <string name="fail_camera_configuration">Kameru nije moguće pripremiti za snimanje.</string>
+    <string name="fail_camera_code">Kod greške kamere: %1$d</string>
+    <string name="fail_start_recording">Snimanje nije moguće pokrenuti. Proverite dozvole aplikacije i pokušajte ponovo.</string>
+    <string name="fail_segment_processing">Obrada segmenta nije završena. Proverite slobodan prostor na uređaju.</string>
+    <string name="fail_mp4_creation">Nije moguće napraviti MP4 snimak. Moguće je da ovaj segment nije sačuvan.</string>
+    <string name="calib_no_frames">Nijedan kadar nije snimljen</string>
+    <string name="calib_result">%1$d kadrova · %2$d ključnih · %3$.0f fps · %4$d kb/s</string>
+    <string name="calib_failed">Test nije uspeo</string>
+    <string name="perm_other">Druga dozvola</string>
+    <string name="calc_delete">Obriši poslednju cifru</string>
+    <string name="help_dropbox_body">1. Unesite Dropbox ključ aplikacije koji ste dobili uz ovu verziju i izaberite „Poveži Dropbox nalog u pregledaču”.\n2. Pokrenite odobravanje pristupa, prijavite se na www.dropbox.com i odobrite pristup. Kopirajte kod, vratite se ovde i izaberite „2. Poveži nalog”.\n3. Sačuvajte podešavanja, izaberite odredišnu fasciklu i podesite „Šifrovanje datoteka”. Ponovo sačuvajte.\n4. Na drugom uređaju preuzmite probni snimak bez osetljivog sadržaja i prateće datoteke za proveru. Proverite reprodukciju ili dešifrovanje i integritet pre upotrebe.\n\nPovezivanje koristi PKCE i token za osvežavanje pristupa. Ne unosite tajni ključ aplikacije (app secret) u telefon. Ako kod istekne, ponovite odobravanje pristupa.\n\nPregledač koristi sopstvena mrežna podešavanja. Tor podešavanje ove aplikacije obuhvata njene direktne zahteve ka Dropbox-u, ali ne i prijavu u pregledaču.\n\nZa održavaoce: u Dropbox App Console registrujte aplikaciju tipa „Scoped access / App folder” sa dozvolama account_info.read, files.content.write, files.metadata.read i files.metadata.write. Korisnicima prosledite njen javni ključ aplikacije (app key). Za javno izdanje može biti potrebno Dropbox odobrenje za produkciju.\n\nNešifrovane datoteke mogu da čitaju servis i svako ko ima pristup nalogu. Za .jwe datoteke šifrovane za primaoca potreban je njegov privatni ključ; Dropbox ne može da ih prikaže kao video. Datoteke koje već čekaju slanje zadržavaju sačuvano odredište i način šifrovanja.</string>
+    <string name="help_gdrive_body">Google Drive se podešava ručnim unosom OAuth tokena. Na ovom ekranu nema vođene prijave na Google nalog u pregledaču. Za jednostavnije podešavanje koristite vođeno povezivanje sa Dropbox-om ili Nextcloud-om.\n\nZa kratku probu:\n1. Otvorite https://developers.google.com/oauthplayground\n2. Izaberite Drive API v3 i dozvolu https://www.googleapis.com/auth/drive.file\n3. Izaberite „Authorize APIs” i odobrite pristup.\n4. Izaberite „Exchange authorization code for tokens”.\n5. Kopirajte „Access token” u polje za pristupni token u ovoj aplikaciji.\n6. Izaberite odredišnu fasciklu, podesite šifrovanje pri slanju i sačuvajte.\n\nPristupni tokeni ističu. Ne oslanjajte se na ručno nalepljen token za snimanje bez nadzora. Kod za povezivanje podržava osvežavanje tokena, ali ovaj ekran nema celovito vođeno podešavanje Google klijenta i njegovih pristupnih podataka.\n\nPreuzmite probni snimak i datoteke za proveru na drugom uređaju i proverite ih. Prijava u pregledaču koristi njegova mrežna podešavanja. Ne delite tokene u snimcima ekrana ni prijavama problema.</string>
+    <string name="help_webdav_body">Unesite punu HTTPS adresu WebDAV pristupa, korisničko ime i lozinku. Za Nextcloud je bolje da izaberete posebnu opciju „Nextcloud” i koristite lozinku za aplikaciju umesto lozinke za prijavu.\n\nWebDAV adresa za Nextcloud:\nhttps://VAS_SERVER/remote.php/dav/files/VASE_KORISNICKO_IME/\nAko je Nextcloud instaliran u potfascikli, njen naziv unesite pre /remote.php.\n\nZa druge WebDAV servere preuzmite adresu pristupa od administratora. To nije veza za javno deljenje datoteka. Izaberite fasciklu u koju imate pravo upisa, podesite šifrovanje pri slanju i sačuvajte.\n\nProverite vezu, zatim pošaljite probni snimak bez osetljivog sadržaja i preuzmite ga sa pratećim datotekama na drugom uređaju. Uspešna provera veze ne potvrđuje da rade pravljenje datoteka, slanje i ponovno čitanje.\n\nAko prijava ne uspe, proverite korisničko ime, lozinku za aplikaciju i prava pristupa fascikli. Ako TLS provera ne uspe, proverite sertifikat i HTTPS adresu; nemojte zaobilaziti proveru sertifikata. Tor podešavanje ove aplikacije ne važi za pregledač ni druge aplikacije.</string>
+    <string name="help_nextcloud_body">1. Prijavite se na Nextcloud u pregledaču. Otvorite podešavanja naloga → Bezbednost → Uređaji i sesije i napravite lozinku za aplikaciju. Kopirajte je; ne koristite glavnu lozinku za prijavu.\n2. U vođenom podešavanju unesite osnovnu HTTPS adresu servera, na primer https://cloud.primer.com ili https://cloud.primer.com/nextcloud. Ne unosite vezu za javno deljenje ni punu WebDAV putanju.\n3. Unesite stvarno korisničko ime, lozinku za aplikaciju i odredišnu fasciklu. Ako koristite više nivoa fascikli, prvo ih napravite na serveru.\n4. Proverite vezu i sačuvajte podešavanja. Zatim u podešavanjima izaberite „Šifrovanje datoteka” i ponovo sačuvajte.\n5. Pošaljite probni snimak bez osetljivog sadržaja. Na drugom uređaju preuzmite snimak i prateće datoteke, pa proverite reprodukciju ili dešifrovanje i integritet.\n\nUgrađena veza šalje velike datoteke u delovima i proverava sadržaj tako što ga ponovo preuzme. To troši dodatni saobraćaj i ne garantuje trajno čuvanje na serveru. Oporavak od svih vrsta prekida nije proveren na svim serverima.\n\nHTTPS je obavezan i za .onion adrese. Ako koristite Tor, pokrenite Orbot. Pregledač koristi sopstvena mrežna podešavanja.\n\nOpcioni SHA-256 SPKI otisak ograničava koje sertifikate servera aplikacija prihvata. Proverite ga nezavisnim putem, na primer preko konzole servera. Samo preuzimanje otiska ne potvrđuje identitet servera.\n\nProvera veze ne potvrđuje pravo upisa. Ako slanje ne uspe, proverite slobodan prostor, dozvole za fasciklu i ograničenja servera ili posrednika. Datoteke koje čekaju slanje zadržavaju sačuvano odredište; sačekajte da se pošalju pre promene naloga. Opoziv lozinke za aplikaciju ne briše već poslate datoteke.</string>
+    <string name="language_title">Language / Jezik</string>
+    <string name="language_english">English</string>
+    <string name="language_serbian">Srpski (latinica)</string>
+    <string name="language_change_note">Jezik se menja odmah. Pre promene sačuvajte ostala podešavanja.</string>
+    <string name="upload_block_choice">Slanje nije pokrenuto: izaberite slanje sa šifrovanjem ili bez njega.</string>
+    <string name="upload_block_key">Slanje nije pokrenuto: javni ključ primaoca nedostaje ili nije ispravan.</string>
+    <string name="upload_block_destination">Slanje nije pokrenuto: podesite odredište i podatke za pristup.</string>
+    <string name="upload_block_folder">Slanje nije pokrenuto: nema dozvole za pristup fascikli. Izaberite je ponovo.</string>
+    <string name="upload_block_external_saf">Slanje nije pokrenuto: izabrana aplikacija za datoteke ne koristi mrežna podešavanja ovog snimača. Koristite ugrađenu vezu sa Nextcloud-om ili Dropbox-om, ili proverite mrežna podešavanja.</string>
+    <string name="upload_block_offline">Čeka se mrežna veza. Datoteke za slanje ostaju na telefonu.</string>
+    <string name="upload_block_tor">Slanje nije pokrenuto: pokrenite Orbot/Tor. Datoteke ostaju u redu za slanje.</string>
+    <string name="upload_block_vpn">Slanje nije pokrenuto: potreban je VPN, ali nije prepoznat.</string>
+    <string name="upload_block_changed">Neke datoteke čekaju slanje na prethodno odredište. Vratite njegova podešavanja naloga i fascikle da biste ih poslali.</string>
+    <string name="upload_failed_retry">Slanje nije uspelo. Datoteke ostaju u redu za novi pokušaj. Proverite vezu, nalog, slobodan prostor i odredište.</string>
+    <string name="upload_save_choice">Sačuvaj izbor za slanje</string>
+    <string name="upload_choice_intro">Izaberite način slanja pre nastavka. Obični MP4 snimci mogu da se šalju bez ključa primaoca. Za šifrovanje za primaoca potreban je ključ. Bez ovog izbora slanje neće početi.</string>
+    <string name="upload_checking">Provera slanja…</string>
+    <string name="upload_fix_setup">Reši problem sa slanjem</string>
+    <string name="upload_retry">Pokušaj slanje ponovo</string>
+    <string name="upload_blocked_title">Slanje trenutno nije moguće</string>
+    <string name="upload_local_warning">Možete odmah da snimate na telefon, ali nema potvrđene rezervne kopije van njega. Slanje sačuvanih datoteka pokušaće se ponovo kada budu ispunjeni uslovi.</string>
+    <string name="upload_record_local">Za sada snimaj na telefon</string>
+    <string name="capture_checking">Provera snimanja…</string>
+    <string name="capture_starting">Pokretanje snimanja — čekaju se prvi podaci</string>
+    <string name="capture_live_av">Snimanje je u toku — stižu slika i zvuk</string>
+    <string name="capture_live_audio">Snimanje je u toku — stiže zvuk</string>
+    <string name="capture_missing_video">Nema slike — stiže samo zvuk</string>
+    <string name="capture_missing_audio">Nema zvuka — stiže samo slika</string>
+    <string name="capture_stalled">Snimanje je zastalo — ne stižu podaci kamere ni mikrofona</string>
+    <string name="capture_stopping">Zaustavljanje — čuva se poslednji segment…</string>
+    <string name="capture_saved_segments">Sačuvani delovi ovog snimka za slanje: %1$d</string>
+    <string name="upload_sending">Slanje/provera datoteke — prijem još nije potvrđen</string>
+    <string name="upload_waiting_worker">Datoteke čekaju sledeći pokušaj slanja</string>
+    <string name="upload_saved_saf">Red za slanje je prazan. Datoteke su sačuvane u izabranoj fascikli; sinhronizacija sa oblakom nije potvrđena.</string>
+    <string name="upload_verified">Red za slanje je prazan. Server je prihvatio poslate datoteke.</string>
+    <string name="upload_waiting_segment">Čeka se prvi završen segment za slanje</string>
+    <string name="upload_no_receipt">Nema datoteka koje čekaju slanje. Od pokretanja aplikacije još nije potvrđeno nijedno slanje.</string>
+    <string name="upload_queue_detail">Čeka slanje: %1$d datoteka (%2$.1f MB) · Potvrđeno od pokretanja aplikacije: %3$d datoteka</string>
+    <string name="upload_status_unknown">Nije moguće proveriti stanje slanja. Ne pretpostavljajte da su datoteke stigle.</string>
+    <string name="upload_open_status">Dodirnite da proverite slanje i datoteke koje čekaju.</string>
+    <string name="calib_preview_privacy">Kadar iz svake rezolucije koja prođe proveru čuva se šifrovano u aplikaciji. Probni video se briše; kadrovi se ne šalju u oblak niti dodaju u galeriju. Provera se prekida kada napustite ovaj ekran.</string>
+    <string name="calib_view_frame">Pogledaj kadar</string>
+    <string name="calib_use_default">Postavi kao podrazumevanu</string>
+    <string name="calib_is_default">Podrazumevana rezolucija</string>
+    <string name="calib_use_auto">Koristi punu izvornu referentnu rezoluciju</string>
+    <string name="calib_default_auto">Podrazumevano: puna izvorna referentna rezolucija</string>
+    <string name="calib_default_size">Izvorno snimanje: %1$d × %2$d</string>
+    <string name="calib_default_saved">Rezolucija %1$d × %2$d je sačuvana za naredna snimanja.</string>
+    <string name="calib_clear_previews">Obriši sačuvane kadrove za pregled</string>
+    <string name="calib_not_tested">Nije provereno</string>
+    <string name="calib_preview_stale">Sačuvani kadar je iz prethodne provere. Ponovite proveru pre nego što izaberete ovu rezoluciju.</string>
+    <string name="calib_pass_preview">Provera uspešna · %1$d kadrova · %2$.0f kadrova/s · kadar za pregled je sačuvan</string>
+    <string name="calib_save_failed">Podrazumevana rezolucija nije sačuvana. Pokušajte ponovo.</string>
+    <string name="calib_frame_description">Probni kadar u rezoluciji %1$d × %2$d</string>
+    <string name="calib_frame_help">Ovo je kadar iz direktnog snimanja iz kamere u enkoder. Samo se ovaj pregled prilagođava ekranu. Aplikacija ne menja veličinu videa niti mu dodaje trake. Uporedite sve četiri ivice scene sa referencom, bez pomeranja telefona.</string>
+    <string name="calib_settings_help">Podrazumevano se koristi najveća izvorna video-rezolucija sa odnosom stranica senzora pri standardnoj brzini snimanja, bez dodatnog skaliranja. Pre izbora manje rezolucije uporedite probne kadrove.</string>
+    <string name="set_preset_help">Video ide direktno iz kamere u enkoder. Aplikacija ne menja veličinu slike, ne dodaje trake, ne izbacuje kadrove i ne stvara međukadrove. Profili menjaju broj kadrova kamere i automatski protok videa, ali ne menjaju zvuk. Referenca je najveća podržana izvorna rezolucija sa odnosom stranica senzora. Manja izvorna rezolucija zahteva poređenje kadrova u proveri kamere. Promena broja kadrova ili podešavanja kamere poništava to poređenje i vraća referentnu rezoluciju. Ušteda baterije zavisi od telefona i mora da se izmeri.</string>
+    <string name="camera_backend_title">Opcije kompatibilnosti kamere</string>
+    <string name="camera_backend_current">Camera2 · podrazumevano</string>
+    <string name="camera_backend_experimental">CameraX · probna opcija</string>
+    <string name="camera_backend_help">CameraX koristi isti enkoder i isti način čuvanja segmenata. Provera kompatibilnosti još nije završena. Sačuvajte izbor, pa proverite kameru pre probnog snimanja. Za sada se nemojte oslanjati na ovu probnu opciju za važne dokaze. Ako ne radi, zaustavite snimanje i izaberite Camera2; aplikacija nikada ne menja sistem bez vašeg izbora.</string>
+    <string name="camera_backend_failed">Sistem kamere nije uspeo da održi snimanje. Zaustavite snimanje, proverite sačuvane segmente i pokušajte sa sistemom Camera2 ili ponovo proverite kameru. Deo video-snimka možda nedostaje.</string>
+    <string name="capture_measured_fps">%1$s · cilj %2$d kadrova/s · izmereno %3$.1f kadrova/s · %4$d × %5$d</string>
+    <string name="measurement_title">Merenja tokom snimanja</string>
+    <string name="measurement_unknown">nije dostupno</string>
+    <string name="measurement_none">Još nema merenja za završeno snimanje. Pokrenite snimanje i zaustavite ga dugmetom da biste sačuvali izveštaj.</string>
+    <string name="measurement_plugged">Punjač je bio povezan pri početnom ili završnom merenju</string>
+    <string name="measurement_unplugged">Punjač nije bio povezan ni pri početnom ni pri završnom merenju</string>
+    <string name="measurement_help">Na telefonu se čuva šifrovano merenje poslednjeg završenog snimanja za svaki sistem kamere i profil. Broj kadrova je prosek iz vremenskih oznaka kodiranog videa. Razmaci između kadrova pomažu pri proveri, ali sami ne dokazuju da kadrovi nedostaju. Saobraćaj obuhvata sav mrežni saobraćaj aplikacije tokom snimanja, uključujući ponovne pokušaje i proveru prenosa. Kasnija slanja i saobraćaj zasebne SAF aplikacije nisu obuhvaćeni. Ovo nije potvrda da je snimak stigao u oblak. Procenat baterije je gruba mera, a temperatura se odnosi na bateriju. Uporedite više snimanja od 10–15 minuta, bez punjača, uz isto osvetljenje, stanje ekrana, mrežu i podešavanja slanja. Trajanje baterije se ne predviđa.</string>
+    <string name="measurement_record">%1$s — %2$s\nTrajanje: %3$s s · %4$d × %5$d\nKadrova/s: cilj %6$d / izmereno %7$s\nNajveći razmak: %8$s ms · vremenske oznake koje ne rastu: %9$d\nKodirani snimak: %10$s MB\nSaobraćaj aplikacije: poslato %11$s MB / primljeno %12$s MB\nBaterija: %13$s → %14$s %%\nTemperatura baterije: %15$s → %16$s °C\n%17$s</string>
+    <string name="fail_full_view">Izvorni režim punog kadra nije dostupan ili nije uspeo. Proverite kameru. Aplikacija neće softverski menjati veličinu slike niti preći na režim koji odseca kadar.</string>
+    <string name="calib_source_help">Najpre isprobajte referencu i uporedite je sa uobičajenim kadrom 1× u fabričkoj aplikaciji Kamera. Ne pomerajte telefon dok isprobavate manje rezolucije. Pre izbora uporedite oba sačuvana kadra i potvrdite da se vide sve četiri ivice scene. Posle promene broja kadrova ili podešavanja kamere potrebno je novo poređenje.</string>
+    <string name="calib_source_apply">Primeni izvor slike kamere</string>
+    <string name="set_preset_minimum">Najmanji broj kadrova · ista izvorna rezolucija · 10 kadrova/s</string>
+    <string name="native_fps_unavailable">Ova kamera ne prijavljuje izvorni režim od %1$d kadrova/s sa minimumom od 10 kadrova/s. Izaberite dostupan broj kadrova u podešavanjima. Aplikacija neće umesto toga snimati brže i izbacivati kadrove.</string>
+    <string name="native_fps_below_minimum">Kamera isporučuje manje od 10 kadrova/s. Proverite osvetljenje, zagrevanje i podešavanja kamere; traženi minimum se ne održava.</string>
+    <string name="native_rates_help">Prijavljeni izvorni brojevi kadrova/s: %1$s. Nedostupni profili su onemogućeni. Ekspozicija ili zagrevanje ipak mogu smanjiti stvarni broj kadrova; proverite izmerenu vrednost. Ušteda nije zagarantovana.</string>
+    <string name="native_compare_required">Pre poređenja proverite referentnu punu rezoluciju i ovaj režim sa trenutnim podešavanjima.</string>
+    <string name="native_reference">Referenca u punoj rezoluciji</string>
+    <string name="native_candidate">Manja izvorna rezolucija</string>
+    <string name="native_compare_title">Da li se i dalje vidi cela scena?</string>
+    <string name="native_compare_help">Potvrdite samo ako telefon nije pomeran i ako se u oba kadra vide iste gornja, donja, leva i desna ivica scene. Ako niste sigurni ili neka ivica nedostaje, otkažite i zadržite referencu u punoj rezoluciji. Ovo je vaša vizuelna potvrda, a ne automatska optička provera.</string>
+    <string name="native_confirm_same_view">Isti ceo kadar — koristi ovaj režim</string>
+    <string name="native_rate_fixed">%1$d kadrova/s</string>
+    <string name="native_rate_variable">%1$d–%2$d kadrova/s (promenljivo)</string>
+    <string name="native_rate_normal">%1$s · Standardno</string>
+    <string name="native_rates_simple">Prikazane su samo brzine koje kamera podržava pri ovoj rezoluciji, uz najmanje 10 kadrova u sekundi. Manje kadrova može smanjiti potrošnju baterije i interneta, uz isti kadar i zvuk. Ušteda zavisi od telefona.</string>
+    <string name="camera_view_title">Pregled kamere</string>
+    <string name="settings_hide_details">Sakrij: %1$s</string>
+    <string name="settings_advanced_video">Napredna podešavanja videa</string>
+    <string name="settings_audio_unchanged">Video se snima u formatu H.264. Promena broja kadrova ne menja podešavanja zvuka.</string>
+    <string name="settings_auto_bitrate">Automatski prilagodi protok videa (preporučeno)</string>
+    <string name="evidence_folder_help">Video-snimci se čuvaju u izabranoj fascikli. Podaci za proveru snimka, vremenske potvrde i podaci sa senzora čuvaju se u potfascikli Evidence, koju aplikacija sama pravi. Kada kopirate ili delite snimke, sačuvajte i tu potfasciklu.</string>
+    <string name="bitrate_title">Protok videa</string>
+    <string name="ob_bitrate_title">Veličina i detalji snimka</string>
+    <string name="bitrate_auto">Automatski (preporučeno)</string>
+    <string name="bitrate_rate">%1$d kb/s</string>
+    <string name="bitrate_custom">Unesite vrednost…</string>
+    <string name="bitrate_legacy">Zadrži postojeće podešavanje po kadru</string>
+    <string name="bitrate_custom_hint">Protok videa u kb/s (200–50000)</string>
+    <string name="bitrate_help">Niži protok znači manje datoteke za slanje, ali i manje detalja, naročito pri kretanju. Vidno polje kamere, rezolucija, broj kadrova u sekundi i zvuk ostaju isti. Ušteda baterije nije zagarantovana. Promena važi od sledećeg snimanja.</string>
+    <string name="bitrate_auto_help">Automatski protok zavisi od rezolucije, broja kadrova u sekundi i kvaliteta. Uneta vrednost je ciljni protok, a ne tačno ograničenje veličine datoteke; telefon mora da je podržava.</string>
+    <string name="bitrate_estimate">Približno %1$.1f MB videa u minutu pri ciljnom protoku, uz dodatni prostor za zvuk i metapodatke. Stvarna veličina zavisi od scene i enkodera.</string>
+    <string name="bitrate_invalid">Unesite ceo broj od 200 do 50000 kbps.</string>
+    <string name="bitrate_unsupported">Ovaj enkoder ne podržava %1$d kbps. Podržani opseg je %2$d–%3$d kbps. Izaberite drugi protok u podešavanjima.</string>
+    <string name="bitrate_mode_unsupported">Ovaj enkoder ne podržava podešavanje ciljnog protoka. Snimanje nije moglo da počne.</string>
+    <string name="measurement_bitrate">Protok videa: ciljni %1$s kbps; izmereni %2$s kbps (bez zvuka).</string>
+    <string name="camera_preview">Prikaz kamere</string>
+    <string name="preview_starting">Otvaranje kamere…</string>
+    <string name="preview_permission">Dozvolite pristup kameri za prikaz uživo.</string>
+    <string name="preview_allow_camera">Dozvoli pristup kameri</string>
+    <string name="preview_unavailable">Prikaz kamere nije dostupan. Proverite status snimanja ispod.</string>
+    <string name="set_enable_audio">Snimaj zvuk</string>
+    <string name="audio_option_help">Izaberite pre početka snimanja. Kada je isključeno, mikrofon se ne koristi i video nema zvučni zapis.</string>
+    <string name="capture_select_track">Uključite video ili zvuk pre snimanja.</string>
+    <string name="capture_live_video">Snimanje videa · zvuk isključen</string>
+    <string name="flash_on">Uključi blic tokom snimanja</string>
+    <string name="flash_off">Isključi blic</string>
+    <string name="flash_unavailable">Blic nije dostupan</string>
+    <string name="flash_failed">Promena blica nije uspela. Pokušajte ponovo.</string>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <string name="recovery_running">Snimanje je prekinuto. Oporavak sačuvanog snimka je u toku… Sačekajte.</string>
+    <string name="recovery_failed">Deo snimka još nije oporavljen. Dodirnite „Pokušaj slanje ponovo”. Ako se problem ponavlja, sačuvajte dostupne snimke i potražite tehničku pomoć. Nemojte deinstalirati aplikaciju.</string>
+    <string name="recovery_interrupted">Snimanje je prekinuto. Sačuvani deo je oporavljen gde je to bilo moguće. Kraj snimka možda nije sačuvan. Dodirnite „Snimaj” za novo snimanje.</string>
+    <string name="capture_storage_low">Nema dovoljno slobodnog prostora za bezbedno čuvanje snimka. Snimanje je zaustavljeno ili ne može da počne. Oslobodite prostor u drugim aplikacijama; ovde sačuvani snimci se zadržavaju.</string>
+    <string name="capture_buffer_full">Snimanje je zaustavljeno jer telefon nije mogao dovoljno brzo da sačuva video. Sačuvani deo se zadržava. Pustite telefon da se ohladi, pa pokušajte ponovo.</string>
+    <string name="capture_journal_failed">Snimanje je zaustavljeno jer snimak nije mogao bezbedno da se sačuva. Sačuvani deo se zadržava. Oslobodite prostor i pokušajte ponovo; nemojte deinstalirati aplikaciju.</string>
+    <string name="capture_audio_timing_failed">Snimanje je zaustavljeno jer zvuk nije mogao da prati sliku. Sačuvani delovi snimka se zadržavaju. Pre naredne upotrebe napravite probni snimak i proverite da li se slika i zvuk poklapaju.</string>
+    <string name="adaptive_bitrate_setting">Automatski smanji veličinu videa kada slanje zaostaje (najmanje 1,5 Mb/s pri početnim podešavanjima)</string>
+    <string name="adaptive_bitrate_live">Protok videa sada: %1$d kb/s</string>
+    <string name="adaptive_bitrate_unavailable">Ovaj telefon ne podržava automatsko podešavanje protoka videa. Snimanje se nastavlja sa izabranom vrednošću.</string>
+    <string name="capture_lock_phone">Snimanje je počelo. Telefon možete zaključati bočnim dugmetom.</string>
+</resources>

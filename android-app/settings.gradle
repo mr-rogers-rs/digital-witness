@@ -1,0 +1,14 @@
+rootProject.name = "DigitalWitness"
+include(":app")
+
+
+// Ensure repositories are available for dependency resolution
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+

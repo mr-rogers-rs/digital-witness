@@ -1,0 +1,17 @@
+# First use and personal storage
+
+The setup proceeds through Welcome, How it works, PIN, Permissions, Recording mode, Backup destination, Network privacy, and Done. Set a personal app PIN. Grant camera permission and microphone permission only if recording audio. The language follows the phone or the explicit language choice.
+
+Anonymous metadata mode is the default. It reduces selected metadata; it does not conceal your cloud account, network address or the contents of the scene. Evidence mode retains additional metadata. Choose consciously for your use case. Preview, torch and audio controls are available on the recording screen. Start recording while the app is visible, then lock the phone if desired. Check the recording and upload status when stopping.
+
+Choose your own backup destination. A local folder selected through Android's file picker can be on-device storage or a document provider. A provider accepting a file is not proof it has reached remote storage. Open the remote service and check receipt and playback separately.
+
+Nextcloud setup uses your HTTPS server URL, username and an app password created in your own Nextcloud account. Configure any optional certificate fingerprint from a separately trusted source. WebDAV likewise requires your own HTTPS endpoint and credentials. Dropbox/manual Google Drive options require your own provider application/account credentials as requested by Settings; they do not contain a ready-to-use shared account or authorization project. Validate the chosen provider's permissions, token expiry and refresh behavior before relying on it. There is no central account to connect automatically.
+
+Select the upload confidentiality choice in Backup or Settings. Readable exports upload ordinary media/proof files over the configured transport. Recipient encryption instead requires a recipient RSA public key and produces `.jwe` files. Keys held only in Android Keystore cannot be handed to a desktop recipient. For recipient-encrypted delivery use `python tools/recipient_export.py keygen /private/recipient-directory`, enter a passphrase and copy only `recipient-public.pem` into the app's recipient-key field. Keep `recipient-private.pem` on the recipient's computer. Decrypt downloaded files using `python tools/recipient_export.py decrypt --private-key /private/recipient-directory/recipient-private.pem --output-dir /private/decrypted /download/clip.mp4.jwe`.
+
+The fresh-install network policy requires a secure network and has Tor disabled: with that policy uploads wait for a VPN. Choose the network policy in setup or Settings. Tor requires a working configured proxy; an onion address also requires Tor. Explicitly allowing direct Internet delivery changes the privacy tradeoff; use HTTPS for ordinary remote destinations. Pending files remain queued when the chosen policy blocks delivery. A local-only recording choice is also available.
+
+The initial video target is 2000 kb/s with adaptation enabled. Sustained queue growth can reduce the target gradually to 1750 and 1500 kb/s and restore it as delivery catches up. Resolution and frame rate do not change during adaptation. This reduces encoding quality; check readable detail in representative footage. Slow connections can still accumulate a queue. Explicit bitrate settings remain configurable.
+
+Use harmless material to check offline/reconnect delivery, screen locking on battery, audio synchronization and remote playback on each intended device. See [VALIDATION](VALIDATION.md).

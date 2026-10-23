@@ -1,0 +1,9 @@
+{
+  "sessionId": "test-session-1",
+  "deviceAttestation": null,
+  "appHash": null,
+  "chunks": [
+    {"seq": 0, "hash": "sha256:deadbeef", "prev": "sha256:00", "sig": "ed25519:abc", "ts": 1721039123}
+  ],
+  "merkleRoots": []
+}

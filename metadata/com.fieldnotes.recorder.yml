@@ -1,0 +1,19 @@
+# Draft listing. Supply repository URLs and a pinned build revision before submission.
+Disabled: No independently reviewed public build recipe configured
+Categories:
+  - Security
+  - Multimedia
+License: AGPL-3.0-only
+AuthorName: Digital Witness Contributors
+WebSite: ''
+SourceCode: ''
+IssueTracker: ''
+AutoName: Digital Witness
+Summary: Personal video recorder with integrity proofs
+Description: |
+  Record segmented audio/video with live preview, configurable personal backup
+  destinations and independently checkable integrity proofs. Audio capture,
+  export confidentiality and network policy are configurable. Integrity proofs
+  do not establish the truth of a scene or guarantee legal admissibility.
+AutoUpdateMode: None
+UpdateCheckMode: None

@@ -1,0 +1,237 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://digitalwitness/schemas/proof.schema.json",
+  "title": "DigitalWitnessSegmentProof",
+  "description": "Sidecar integrity proof emitted per recorded MP4 segment (one '<segment>.proof.json' per segment). Produced by integrity/ProofManager.kt and validated by tools/verify_chain.py. Fields under 'evidence mode only' are omitted in anonymous mode, where they would otherwise link recordings to one device. This supersedes the earlier (never-shipped) chunks[]/merkleRoots layout.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "version",
+    "sessionId",
+    "segmentIndex",
+    "segmentFilename",
+    "sha256",
+    "segmentHash",
+    "prevChainHash",
+    "chainHash",
+    "timestampUnix",
+    "timestampIso"
+  ],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "enum": [
+        3,
+        4
+      ],
+      "description": "v3 compatibility or v4 metadata-bound proof"
+    },
+    "sessionId": {
+      "type": "string",
+      "description": "Recording session UUID; one chain per session in both modes."
+    },
+    "segmentIndex": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Zero-based index of this segment within the session/chain."
+    },
+    "segmentFilename": {
+      "type": "string",
+      "description": "Random stable media basename. Content-hash lookup also supports legacy renamed downloads."
+    },
+    "sha256": {
+      "$ref": "#/$defs/hex64",
+      "description": "SHA-256 of the MP4 segment bytes."
+    },
+    "telemetrySha256": {
+      "$ref": "#/$defs/hex64",
+      "description": "SHA-256 of the sensor-telemetry sidecar bytes (present when telemetry was captured). Resolved by content hash, not filename."
+    },
+    "telemetryFilename": {
+      "type": "string",
+      "description": "Original local telemetry sidecar filename ('<segment>.telemetry.json'). Same UUID-rename caveat as segmentFilename."
+    },
+    "segmentHash": {
+      "$ref": "#/$defs/hex64",
+      "description": "v3: SHA256(mediaDigest || optionalTelemetryDigest), or mediaDigest alone without telemetry. v4: SHA256(mediaDigest || optionalTelemetryDigest || SHA256(decodedMetadataBytes))."
+    },
+    "prevChainHash": {
+      "$ref": "#/$defs/hex64",
+      "description": "Previous chain head. For segmentIndex 0 this is H_0 = SHA256(sessionId || beacon.randomness || salt) (or SHA256(sessionId || salt) when no beacon was fetched)."
+    },
+    "chainHash": {
+      "$ref": "#/$defs/hex64",
+      "description": "This segment's chain head = SHA256(segmentHash || prevChainHash)."
+    },
+    "chainSeed": {
+      "type": "object",
+      "description": "Inputs to re-derive H_0 (first segment) and confirm the drand lower time bound.",
+      "additionalProperties": true,
+      "properties": {
+        "salt": {
+          "type": "string",
+          "description": "Base64 (no-wrap) 16-byte random salt folded into H_0."
+        },
+        "beacon": {
+          "$ref": "#/$defs/beacon"
+        }
+      }
+    },
+    "timestampUnix": {
+      "type": "integer",
+      "description": "Proof creation time, Unix seconds. Floored to the hour in anonymous mode."
+    },
+    "timestampIso": {
+      "type": "string",
+      "description": "Proof creation time, ISO-8601 UTC. Floored to the hour in anonymous mode."
+    },
+    "signatureAlgorithm": {
+      "type": "string",
+      "description": "Evidence mode only. Always 'SHA256withECDSA'.",
+      "const": "SHA256withECDSA"
+    },
+    "deviceSignature": {
+      "type": "string",
+      "description": "Evidence mode only. Base64 ECDSA P-256 signature over the raw bytes of chainHash."
+    },
+    "publicKey": {
+      "type": "string",
+      "description": "Evidence mode only. Base64 X.509/DER SubjectPublicKeyInfo of the device signing key."
+    },
+    "captureParams": {
+      "type": "object",
+      "description": "Evidence mode only. Encoder settings (device-capability fingerprint, hence omitted in anonymous mode).",
+      "additionalProperties": true,
+      "properties": {
+        "resolution": {
+          "type": "string"
+        },
+        "fps": {
+          "type": "integer"
+        },
+        "videoBitrateKbps": {
+          "type": "integer"
+        },
+        "audioSampleRate": {
+          "type": "integer"
+        },
+        "audioBitrateKbps": {
+          "type": "integer"
+        }
+      }
+    },
+    "deviceAttestation": {
+      "type": "object",
+      "description": "Evidence mode only, embedded once (first segment that finds it). Hardware key-attestation proving a genuine StrongBox/TEE-backed Android key was bound to a fresh per-session challenge.",
+      "additionalProperties": true,
+      "required": [
+        "chain"
+      ],
+      "properties": {
+        "challengeAlgorithm": {
+          "type": "string",
+          "description": "How the attestation challenge was derived, e.g. 'SHA256(sessionId‖beaconRandomness)'."
+        },
+        "chain": {
+          "type": "array",
+          "description": "Certificate chain, leaf-first, each a base64 (no-wrap) X.509 DER certificate. Validate to the Google hardware attestation root.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "description": "Mode-aware environmental metadata from integrity/EnvironmentCapture.kt. Rich in evidence mode (device/network/sensors); minimized in anonymous mode (motion/magnetic sensors and transport type dropped; presence-only network).",
+      "additionalProperties": true
+    },
+    "metadata": {
+      "type": "string",
+      "description": "v4: standard Base64 of exact UTF-8 JSON metadata bytes; hash bytes directly rather than reserializing."
+    },
+    "recovery": {
+      "type": "object",
+      "required": ["interruptedSession", "partial", "captureTimeKnown"],
+      "properties": {
+        "interruptedSession": {"type": "string", "minLength": 1},
+        "partial": {"const": true},
+        "captureTimeKnown": {"const": false},
+        "note": {"type": "string"}
+      },
+      "description": "Optional v4 bound declaration for recovered packets. The proof timestamp is recovery/construction time; gaps and an unflushed tail can be missing."
+    },
+    "mode": {
+      "enum": [
+        "anonymous",
+        "evidence"
+      ]
+    }
+  },
+  "$defs": {
+    "hex64": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{64}$",
+      "description": "Lower-case hex-encoded SHA-256 (64 chars)."
+    },
+    "beacon": {
+      "type": "object",
+      "description": "drand randomness beacon (lower time bound). A verifier re-fetches 'round' from any drand relay and confirms 'randomness' matches.",
+      "additionalProperties": true,
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "Beacon source, e.g. 'drand'."
+        },
+        "round": {
+          "type": "integer",
+          "description": "drand round number (its time is public and immutable)."
+        },
+        "randomness": {
+          "type": "string",
+          "description": "Hex randomness for that round."
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "version": {
+            "const": 4
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "metadata",
+          "mode",
+          "chainSeed"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "version": {
+            "const": 4
+          },
+          "mode": {
+            "const": "evidence"
+          }
+        },
+        "required": [
+          "mode"
+        ]
+      },
+      "then": {
+        "required": [
+          "publicKey",
+          "deviceSignature",
+          "signatureAlgorithm"
+        ]
+      }
+    }
+  ]
+}

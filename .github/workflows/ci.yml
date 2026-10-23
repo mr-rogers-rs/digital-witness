@@ -1,0 +1,61 @@
+name: CI
+
+# Build and test a checkout without private signing credentials.
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verifier-tests:
+    name: Verifier round-trip tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install verifier dependencies
+        run: pip install -r tools/requirements.txt
+      - name: Run verifier round-trip tests
+        run: |
+          python tools/test_verify_chain.py
+          python tools/test_security_regressions.py
+          python tools/check_localizations.py
+          python -m unittest discover -s tools -p test_prepare_handoff.py
+
+  android-build:
+    name: Android build, lint and compiled regressions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Build individual APKs and check lint
+        working-directory: android-app
+        run: ./gradlew :app:assembleDebug :app:assembleRelease :app:assembleDebugAndroidTest :app:lintDebug :app:lintRelease --no-daemon --stacktrace
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Test production crypto, media, recovery and uploads
+        shell: bash
+        run: |
+          pip install -r tools/requirements.txt
+          stdlib=$(find "$HOME/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.9.24" -name '*.jar' ! -name '*-sources.jar' ! -name '*-javadoc.jar' -print -quit)
+          json_jar="$RUNNER_TEMP/json-20240303.jar"
+          curl --fail --location --retry 3 https://repo.maven.apache.org/maven2/org/json/json/20240303/json-20240303.jar --output "$json_jar"
+          echo "3cf6cd6892e32e2b4c1c39e0f52f5248a2f5b37646fdfbb79a66b46b618414ed  $json_jar" | sha256sum --check -
+          python tools/run_jvm_security_tests.py --stdlib "$stdlib" --android-jar "$ANDROID_HOME/platforms/android-34/android.jar"
+          python tools/run_jvm_pin_tests.py --stdlib "$stdlib" --android-jar "$ANDROID_HOME/platforms/android-34/android.jar"
+          python tools/run_reliability_tests.py --variant debug --json-jar "$json_jar" --android-jar "$ANDROID_HOME/platforms/android-34/android.jar"
+          python tools/run_upload_drain_tests.py --json-jar "$json_jar" --android-jar "$ANDROID_HOME/platforms/android-34/android.jar"
