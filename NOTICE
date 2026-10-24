@@ -43,3 +43,12 @@ cloud listings, and stores encrypted numeric-only timing totals for diagnosis.
 Distribution revision 0.4.5 expands the camera preview to the screen width,
 preserves its aspect ratio, and keeps recording controls visible while scrolling.
 Recording, encoding and upload behavior are unchanged from revision 0.4.4.
+
+Distribution revision 0.4.6 puts Settings in a fixed header and outlined flash
+and audio toggles over the camera preview, with accessible state/action labels.
+Audio track selection remains fixed during recording. Capture and delivery
+implementation remains unchanged from revision 0.4.5.
+
+Distribution revision 0.4.7 presents audio selection as a labeled checkbox
+below the camera viewport, visible without scrolling, while retaining the
+fixed Settings icon and camera flash overlay. Capture and delivery code is unchanged.

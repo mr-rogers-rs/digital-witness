@@ -1,6 +1,6 @@
 # First use and personal storage
 
-The camera preview spans the screen width and follows the camera's aspect ratio without cropping or stretching. Scroll to reach audio, torch, backup and settings controls. Start/Stop and the recording status stay visible at the bottom while scrolling. Enlarging the preview does not change the recorded video or upload quality.
+The camera preview spans the screen width and follows the camera's aspect ratio without cropping or stretching. Settings is the gear icon in the fixed upper-right header. The outlined flash control is in the upper-left corner of the camera image: a slash means off; an unslashed, highlighted icon means on. Long-press the flash icon for its state and action, also available to screen readers. The Record audio checkbox is below the camera viewport, above the recording status and Start/Stop button, and stays visible while scrolling. Choose audio before starting; the checkbox is dimmed and cannot change tracks during recording. Start/Stop and the recording status stay visible at the bottom while scrolling. Backup details and other actions remain below the preview in the scrollable area. Enlarging the preview and moving controls do not change the recorded video or upload quality.
 
 The setup proceeds through Welcome, How it works, PIN, Permissions, Background recording, Backup destination, Network privacy, and Done. Set a personal app PIN. Grant camera permission and microphone permission only if recording audio. The language follows the phone or the explicit language choice.
 

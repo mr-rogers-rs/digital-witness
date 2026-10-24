@@ -574,10 +574,13 @@
     <string name="audio_option_help">Izaberite pre početka snimanja. Kada je isključeno, mikrofon se ne koristi i video nema zvučni zapis.</string>
     <string name="capture_select_track">Uključite video ili zvuk pre snimanja.</string>
     <string name="capture_live_video">Snimanje videa · zvuk isključen</string>
-    <string name="flash_on">Uključi blic tokom snimanja</string>
+    <string name="flash_on">Uključi blic</string>
     <string name="flash_off">Isključi blic</string>
     <string name="flash_unavailable">Blic nije dostupan</string>
     <string name="flash_failed">Promena blica nije uspela. Pokušajte ponovo.</string>
+    <string name="flash_enabled_status">Blic je uključen</string>
+    <string name="flash_disabled_status">Blic je isključen</string>
+    <string name="camera_toggle_label">%1$s. %2$s.</string>
 
 
 

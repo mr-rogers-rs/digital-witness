@@ -30,8 +30,8 @@ android {
         applicationId "com.fieldnotes.recorder"
         minSdk 26
         targetSdk 34
-        versionCode 9
-        versionName "0.4.5"
+        versionCode 11
+        versionName "0.4.7"
         testInstrumentationRunner "com.fieldnotes.recorder.capture.MuxRegressionInstrumentation"
     }
 

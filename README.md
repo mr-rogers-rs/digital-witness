@@ -13,14 +13,14 @@ Ovo je **pojedinačno izdanje**: sami podešavate aplikaciju i svoje mesto za č
 Potrebni su **Android 8.0 ili noviji**, kamera i dovoljno slobodnog prostora.
 
 1. Otvorite [izdanja aplikacije](https://github.com/mr-rogers-rs/digital-witness/releases).
-2. Za izdanje **0.4.5**, u odeljku **Assets** preuzmite `digital-witness-0.4.5.apk`. Datoteke „Source code” služe za izgradnju aplikacije, a ne za instalaciju na telefon.
+2. Za izdanje **0.4.7**, u odeljku **Assets** preuzmite `digital-witness-0.4.7.apk`. Datoteke „Source code” služe za izgradnju aplikacije, a ne za instalaciju na telefon.
 3. Otvorite APK na telefonu. Ako Android zatraži dozvolu za instaliranje iz tog izvora, odobrite je za pregledač ili upravljač datotekama koji koristite.
 4. Pokrenite aplikaciju **Terenski snimač** i prođite kroz početno podešavanje. Dostupni su srpski na latinici i engleski jezik.
 
-Uz APK je dostupan `digital-witness-0.4.5.apk.sha256`. Pre instalacije možete proveriti da li se SHA-256 preuzete datoteke poklapa sa objavljenom vrednošću. Na Windowsu:
+Uz APK je dostupan `digital-witness-0.4.7.apk.sha256`. Pre instalacije možete proveriti da li se SHA-256 preuzete datoteke poklapa sa objavljenom vrednošću. Na Windowsu:
 
 ```powershell
-Get-FileHash .\digital-witness-0.4.5.apk -Algorithm SHA256
+Get-FileHash .\digital-witness-0.4.7.apk -Algorithm SHA256
 ```
 
 Kontrolna suma pomaže da otkrijete oštećenu ili različitu datoteku. Sama po sebi ne potvrđuje identitet izdavača.
@@ -29,7 +29,7 @@ Slanje koristi do dve istovremene datoteke kada izmerena brzina to opravdava. Pr
 
 ## Prvi snimak: podesi → snimaj → zaključaj → proveri
 
-1. **Podesite zaštitu, dozvole i rad u pozadini.** Izaberite lični PIN aplikacije. Dozvolite pristup kameri; pristup mikrofonu je potreban samo ako želite zvuk. Opciju **Snimaj zvuk** izaberite pre početka snimanja. U koraku **Snimanje sa zaključanim ekranom** proverite ograničenja baterije; aplikacija nudi otvaranje potrebnih podešavanja pre prvog snimanja.
+1. **Podesite zaštitu, dozvole i rad u pozadini.** Izaberite lični PIN aplikacije. Dozvolite pristup kameri; pristup mikrofonu je potreban samo ako želite zvuk. Pre početka snimanja označite ili uklonite oznaku u polju **Snimaj zvuk** ispod prikaza kamere; ista opcija je dostupna i u Podešavanjima. U koraku **Snimanje sa zaključanim ekranom** proverite ograničenja baterije; aplikacija nudi otvaranje potrebnih podešavanja pre prvog snimanja.
 2. **Izaberite gde se čuvaju kopije.** Dodirnite **Izaberi folder** (preporučeno). U biraču datoteka otvorite meni gore levo (☰) i izaberite podržani servis u oblaku ili folder na telefonu. Google Drive, Dropbox i drugi servisi pojavljuju se samo ako njihova instalirana aplikacija omogućava pristup folderima. Nextcloud je dodatna mogućnost. Možete nastaviti i bez podešenog slanja, ali tada morate pratiti slobodan prostor na telefonu.
 3. **Izaberite način povezivanja.** Podrazumevano je izabrana **Bilo koja veza**: Wi-Fi ili mobilni internet, bez obaveznog VPN-a. U početnom podešavanju možete izabrati da slanje čeka VPN ili Tor. Za udaljene servere koristite HTTPS.
 4. **Snimajte.** Proverite kadar u prikazu kamere, po potrebi uključite blic i dodirnite **Snimaj**. Snimanje započnite dok je aplikacija otvorena; zatim možete zaključati telefon.
@@ -41,6 +41,8 @@ Pre važne upotrebe napravite probni snimak na svom telefonu, sa zaključanim ek
 
 - Prikaz kamere preko cele širine ekrana pre i tokom snimanja, bez razvlačenja ili odsecanja slike.
 - Dugme za početak i zaustavljanje snimanja ostaje vidljivo pri pomeranju ekrana.
+- Podešavanja su dostupna preko zupčanika gore desno, a blic preko oivičene ikone gore levo u prikazu kamere. Precrtana ikona znači da je blic isključen.
+- Polje **Snimaj zvuk** nalazi se ispod prikaza kamere i ostaje vidljivo pri pomeranju ekrana.
 - Pokazatelj napretka pri proveri PIN-a, pokretanju i čuvanju snimka.
 - Zeleno dugme za početak, crveno za zaustavljanje i mogućnost zaustavljanja iz obaveštenja.
 - Blic pre i tokom snimanja, ako ga kamera podržava.
@@ -115,7 +117,7 @@ Za ažuriranje postojeće instalacije potrebni su isti identifikator aplikacije 
 | [SECURITY.md](docs/SECURITY.md) | Model zaštite i ograničenja. |
 | [HANDOFF.md](HANDOFF.md) | Sadržaj izvornog paketa i provera njegovog manifesta. |
 
-Identifikator aplikacije: `com.fieldnotes.recorder` · Verzija: **0.4.5** · Kod verzije: **9** · Minimalni Android API: **26**.
+Identifikator aplikacije: `com.fieldnotes.recorder` · Verzija: **0.4.7** · Kod verzije: **11** · Minimalni Android API: **26**.
 
 ## Prijava problema
 

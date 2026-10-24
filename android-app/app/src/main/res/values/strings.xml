@@ -634,10 +634,13 @@ An app password is separate from your login password and can be revoked individu
     <string name="audio_option_help">Choose before starting. When off, the microphone is not used and videos have no audio track.</string>
     <string name="capture_select_track">Enable video or audio before recording.</string>
     <string name="capture_live_video">Recording video · audio disabled</string>
-    <string name="flash_on">Turn flash on while recording</string>
+    <string name="flash_on">Turn flash on</string>
     <string name="flash_off">Turn flash off</string>
     <string name="flash_unavailable">Flash unavailable</string>
     <string name="flash_failed">Could not change the flash. Try again.</string>
+    <string name="flash_enabled_status">Flash on</string>
+    <string name="flash_disabled_status">Flash off</string>
+    <string name="camera_toggle_label">%1$s. %2$s.</string>
 
 
 
