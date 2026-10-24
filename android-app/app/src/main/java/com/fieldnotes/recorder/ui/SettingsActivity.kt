@@ -160,7 +160,8 @@ class SettingsActivity : AppCompatActivity() {
             setOnClickListener {
                 lifecycleScope.launch {
                     val report = withContext(Dispatchers.IO) {
-                        com.fieldnotes.recorder.capture.RecordingMeasurements.report(this@SettingsActivity)
+                        com.fieldnotes.recorder.capture.RecordingMeasurements.report(this@SettingsActivity) + "\n\n" +
+                            com.fieldnotes.recorder.upload.UploadMeasurements.report(this@SettingsActivity)
                     }
                     val dialog = AlertDialog.Builder(this@SettingsActivity)
                         .setTitle(R.string.measurement_title)

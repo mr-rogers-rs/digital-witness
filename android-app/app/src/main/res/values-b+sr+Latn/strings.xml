@@ -673,7 +673,7 @@
 
 
     <string name="recovery_running">Snimanje je prekinuto. Oporavak sačuvanog snimka je u toku… Sačekajte.</string>
-    <string name="recovery_failed">Deo snimka još nije oporavljen. Dodirnite „Pokušaj slanje ponovo”. Ako se problem ponavlja, sačuvajte dostupne snimke i potražite tehničku pomoć. Nemojte deinstalirati aplikaciju.</string>
+    <string name="recovery_failed">Raniji snimak nije u potpunosti oporavljen. Njegovi podaci su sačuvani na telefonu. Možete započeti novo snimanje; za ponovni oporavak dodirnite Pokušaj slanje ponovo.</string>
     <string name="recovery_interrupted">Snimanje je prekinuto. Sačuvani deo je oporavljen gde je to bilo moguće. Kraj snimka možda nije sačuvan. Dodirnite „Snimaj” za novo snimanje.</string>
     <string name="capture_storage_low">Nema dovoljno slobodnog prostora za bezbedno čuvanje snimka. Snimanje je zaustavljeno ili ne može da počne. Oslobodite prostor u drugim aplikacijama; ovde sačuvani snimci se zadržavaju.</string>
     <string name="capture_buffer_full">Snimanje je zaustavljeno jer telefon nije mogao dovoljno brzo da sačuva video. Sačuvani deo se zadržava. Pustite telefon da se ohladi, pa pokušajte ponovo.</string>
@@ -691,4 +691,11 @@
     <string name="battery_setup_open">Podesi rad u pozadini</string>
     <string name="battery_setup_unavailable">Otvorite podešavanja telefona, pronađite ovu aplikaciju i proverite opcije za bateriju i rad u pozadini.</string>
     <string name="battery_setup_note">Posle izmene podešavanja vratite se ovde. Možete nastaviti i bez izmene, ali pre upotrebe isprobajte snimanje sa zaključanim ekranom. Ove opcije su dostupne i u podešavanjima aplikacije.</string>
+    <string name="unlock_checking">Provera PIN-a…</string>
+    <string name="unlock_retry">Otključavanje nije završeno. Pokušajte ponovo.</string>
+    <string name="recording_saving">Čuvanje snimka…</string>
+    <string name="recording_preparing">Priprema snimanja…</string>
+    <string name="recovery_support_code">Oznaka oporavka: %1$s</string>
+    <string name="upload_measurements_none">Još nema rezultata merenja slanja.</string>
+    <string name="upload_measurements_report">Poslednji ciklus slanja (%1$s; do %2$d prenosa)\nProvereno: %3$d datoteka; neuspešno: %4$d; %5$.1f MB\nTrajanje: %6$.1f s\nPriprema: %7$.1f s; traženje u folderu: %8$.1f s\nKopiranje/upis: %9$.1f s; provera čitanjem kopije: %10$.1f s\nDirektna veza sa servisom: %11$.1f s; ažuriranje reda: %12$.1f s\nVremena su zbir za istovremene prenose i mogu da se preklapaju. Rezultati ne sadrže imena datoteka ni podatke o nalogu. Provera preko birača foldera potvrđuje da posrednička aplikacija može da pročita kopiju, a ne da je ona stigla u oblak.</string>
 </resources>

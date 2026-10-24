@@ -16,6 +16,10 @@ object CaptureStatus {
     @Volatile var torchEnabled = false
     @Volatile var torchProblem: String? = null
 
+    /** Recovery/setup can block a new start, never the Stop control of a live session. */
+    fun recordingControlEnabled(startPending: Boolean, recoveryPending: Boolean): Boolean =
+        if (running) !stopping else !startPending && !stopping && !recoveryPending
+
     fun start(now: Long) {
         stopping = false; startedAt = now; lastAudio = 0; lastVideo = 0
         savedSegments = 0; problem = null; running = true

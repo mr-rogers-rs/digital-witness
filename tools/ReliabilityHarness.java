@@ -133,12 +133,39 @@ public class ReliabilityHarness {
         block=Arrays.stream(j.getDirectory().listFiles()).filter(f->f.getName().matches("[0-9]{12}\\.spf")).findFirst().orElseThrow();
         var bytes=Files.readAllBytes(block.toPath()); bytes[bytes.length-1]^=1; Files.write(block.toPath(),bytes);
         check(!recover() && j.getDirectory().isDirectory(),"Corrupt journal fails closed and is retained");
+        reset();
+        var damaged=journal(); add(damaged,1000,true); damaged.flush();
+        var stateFile=new File(damaged.getDirectory(),"state.spf");
+        var damagedBytes=Files.readAllBytes(stateFile.toPath()); damagedBytes[damagedBytes.length-1]^=1;
+        Files.write(stateFile.toPath(),damagedBytes);
+        var healthy=journal(); add(healthy,1000,true); healthy.flush();
+        check(!recover(),"An unrecoverable journal remains reported");
+        check(damaged.getDirectory().isDirectory() && !healthy.getDirectory().exists(),
+            "A damaged journal is retained without preventing healthy journal recovery");
+        check(UploadQueue.INSTANCE.listPending(ctx).size()==2 && CaptureRecovery.INSTANCE.getFailureCode()!=null,
+            "Healthy media/proof is published and a content-free support code is retained");
+        var lease=CaptureRecovery.INSTANCE.tryClaimCapture();
+        check(lease!=null,"Failed pending recovery does not indefinitely block a new user capture");
+        try {
+            check(CaptureRecovery.INSTANCE.tryClaimCapture()==null,"Only one capture/recovery owner can hold the writer lease");
+            check(!recover(),"Recovery does not wait on or modify journals while capture owns the writers");
+            com.fieldnotes.recorder.capture.CaptureStatus.INSTANCE.start(1000);
+            CaptureRecovery.INSTANCE.request(ctx);
+            check(CaptureRecovery.INSTANCE.message()==null,"An active journal is not displayed as interrupted capture");
+            var fresh=journal(); add(fresh,2000,true); fresh.flush();
+            check(!fresh.getDirectory().equals(damaged.getDirectory()),"New capture uses an independent journal");
+            check(Arrays.equals(Files.readAllBytes(stateFile.toPath()),damagedBytes),"A new capture never rewrites older damaged data");
+        } finally {
+            com.fieldnotes.recorder.capture.CaptureStatus.INSTANCE.setRunning(false);
+            CaptureRecovery.INSTANCE.releaseCapture(lease);
+        }
+        check(!CaptureRecovery.INSTANCE.blocksNewRecording(),"Writer ownership is released after capture cleanup");
         reset(); j=journal(); byte[] large=new byte[8*1024*1024];
         for(int i=0;i<4;i++) j.append(true,1000+i,i==0,large);
         failed=false; try { j.append(true,5000,false,new byte[1]); } catch(Exception expected) { failed=true; }
         check(failed,"Journal memory bound rejects additional data");
         long reserve=CaptureLimits.INSTANCE.reserveBytes(2000,32,10);
         check(!CaptureLimits.INSTANCE.canStart(reserve-1,reserve) && CaptureLimits.INSTANCE.canStart(reserve,reserve),"Low-storage boundary and reserve arithmetic");
-        System.out.println("PASS: encrypted journal restart, codec restoration, carry-over, signed partial recovery, atomic queue/cursor replay including delivered files, duplicate suppression, failure retention, destination/wipe gates, corruption and memory/storage limits.");
+        System.out.println("PASS: encrypted journal restart, codec restoration, carry-over, signed partial recovery, atomic replay, failure isolation, new capture despite a retained damaged journal, exclusive writer ownership, destination/wipe gates and memory/storage limits.");
     }
 }

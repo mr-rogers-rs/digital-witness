@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.net.Uri
 import android.os.Build
+import android.provider.DocumentsContract
 import android.util.Log
 import androidx.documentfile.provider.DocumentFile
 import androidx.work.CoroutineWorker
@@ -19,6 +20,10 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.asContextElement
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.cancel
 
 /**
  * Drains the encrypted upload queue, decrypting each file to a temp path
@@ -50,16 +55,21 @@ object UploadDrain {
     enum class Outcome { COMPLETE, MORE, RETRY, STOPPED }
     private const val TAG = "DW-UploadWorker"
     private val drainLock = Mutex()
+    // Bounded process-local tuning: a worker restart must not immediately undo fallback.
+    private val tuning = LinkedHashMap<String, TransferTuning>()
 
     suspend fun run(ctx: Context): Outcome = withContext(Dispatchers.IO) {
         drainLock.withLock {
             try { drain(ctx) }
             catch (e: kotlinx.coroutines.CancellationException) { throw e }
             catch (e: Exception) {
-                UploadStatus.failure = R.string.upload_failed_retry
+                UploadStatus.failure = if (e is DestinationChangedException) R.string.upload_block_changed else R.string.upload_failed_retry
                 showUploadAlert(ctx)
                 Outcome.RETRY
-            } finally { UploadStatus.active = false }
+            } finally {
+                UploadStatus.active = false
+                runCatching { UploadMeasurements.finish(ctx) }
+            }
         }
     }
 
@@ -77,74 +87,151 @@ object UploadDrain {
             return Outcome.RETRY
         }
         UploadStatus.failure = null
+        UploadMeasurements.begin(Prefs.uploadMethod(ctx))
         var failed = false
         // Reuse provider authentication/connections throughout one bounded pass.
+        val target = DeliveryPolicy.target(ctx)
         val cloud = if (Prefs.uploadMethod(ctx) == "cloud") CloudUploadManager(ctx) else null
-        if (cloud != null && !cloud.initialize()) {
+        val initialized = withContext(DeliveryPolicy.activeDestination.asContextElement(target)) {
+            DeliveryPolicy.checkActiveDestination(ctx)
+            cloud?.initialize() ?: true
+        }
+        if (!initialized) {
             UploadStatus.failure = R.string.upload_failed_retry
             return Outcome.RETRY
         }
         val attempted = HashSet<String>()
         val deadline = android.os.SystemClock.elapsedRealtime() + 120_000L
         var more = false
-        drainLoop@ do {
-            val batch = UploadQueue.listPending(ctx).filter { it.absolutePath !in attempted }
-            if (batch.isEmpty()) break
-            for (encFile in batch) {
-                if (android.os.SystemClock.elapsedRealtime() >= deadline) { more = true; break@drainLoop }
-                attempted.add(encFile.absolutePath)
+        val tuner = tuning.getOrPut(target) { TransferTuning() }
+        while (tuning.size > 8) tuning.remove(tuning.keys.first())
+        tuner.begin(android.os.SystemClock.elapsedRealtime())
+        val preparationLock = Mutex()
+        val safDirectoryLock = Mutex()
+        val safDirectories = HashMap<String, DocumentFile>()
+        var stopNew = false
+        var wiped = false
+        coroutineScope {
+            // Only the coordinator claims files and commits receipts. Children own distinct temp paths.
+            val completions = Channel<TransferResult>(2)
+            var running = 0
+            val activeNames = HashSet<String>()
+            while (true) {
                 kotlinx.coroutines.currentCoroutineContext().ensureActive()
-                if (com.fieldnotes.recorder.util.PanicWipe.wipeInProgress) return Outcome.STOPPED
-                var exported: File? = null
-                var plaintext = false
-                var delivered = false
-                try {
+                while (!stopNew && running < tuner.limit) {
+                    if (com.fieldnotes.recorder.util.PanicWipe.wipeInProgress) { wiped = true; stopNew = true; break }
+                    if (android.os.SystemClock.elapsedRealtime() >= deadline) { more = true; stopNew = true; break }
+                    val next = UploadQueue.listPending(ctx).firstOrNull {
+                        it.absolutePath !in attempted && it.name !in activeNames
+                    } ?: break
+                    attempted.add(next.absolutePath)
+                    activeNames.add(next.name)
+                    running++
+                    UploadMeasurements.concurrency(running)
                     UploadStatus.active = true
-                    val policy = DeliveryPolicy.bind(ctx, encFile)
-                    plaintext = policy.getString("mode") == "plaintext"
-                    exported = DeliveryPolicy.export(ctx, encFile, policy)
-                    // Old bound retries retain their original root path; new items use the grouped layout.
-                    val subfolder = EvidenceLayout.validate(policy.optString("subfolder", ""))
-                    delivered = withContext(DeliveryPolicy.activeDestination.asContextElement(policy.getString("target"))) {
-                        DeliveryPolicy.checkActiveDestination(ctx)
-                        when (Prefs.uploadMethod(ctx)) {
-                            "saf" -> uploadViaSAF(ctx, exported, subfolder)
-                            "cloud" -> uploadViaCloud(exported, subfolder, cloud)
-                            else -> false
+                    launch(Dispatchers.IO) {
+                        try {
+                            completions.send(transfer(ctx, next, target, cloud, preparationLock, safDirectoryLock, safDirectories))
+                        } catch (e: kotlinx.coroutines.CancellationException) {
+                            this@coroutineScope.cancel(e)
+                            throw e
                         }
                     }
-                    kotlinx.coroutines.currentCoroutineContext().ensureActive()
-                    if (delivered && !com.fieldnotes.recorder.util.PanicWipe.wipeInProgress) {
-                        UploadQueue.markUploaded(ctx, encFile)
-                        val target = policy.getString("target")
+                }
+                if (running == 0) break
+                val result = completions.receive()
+                running--
+                activeNames.remove(result.queued.name)
+                kotlinx.coroutines.currentCoroutineContext().ensureActive()
+                if (com.fieldnotes.recorder.util.PanicWipe.wipeInProgress) { wiped = true; stopNew = true }
+                try {
+                    if (result.delivered && !wiped) {
+                        val commitStarted = android.os.SystemClock.elapsedRealtime()
+                        withContext(DeliveryPolicy.activeDestination.asContextElement(target)) {
+                            DeliveryPolicy.checkActiveDestination(ctx)
+                            UploadQueue.markUploaded(ctx, result.queued)
+                        }
                         if (UploadStatus.lastTarget != target) UploadStatus.verifiedFiles = 0
                         UploadStatus.lastTarget = target
                         UploadStatus.verifiedFiles++
                         UploadStatus.lastDeliveryWasSaf = Prefs.uploadMethod(ctx) == "saf"
-                    } else { failed = true; if (UploadStatus.failure == null) UploadStatus.failure = R.string.upload_failed_retry }
-                } catch (e: kotlinx.coroutines.CancellationException) {
-                    throw e
+                        tuner.completed(result.size, android.os.SystemClock.elapsedRealtime())
+                        UploadMeasurements.add("commit", android.os.SystemClock.elapsedRealtime() - commitStarted)
+                        UploadMeasurements.confirmed(result.size)
+                    } else if (!wiped) {
+                        failed = true
+                        UploadMeasurements.failed()
+                        tuner.failed(android.os.SystemClock.elapsedRealtime())
+                        val changed = result.error is DestinationChangedException
+                        if (changed || UploadStatus.failure == null) UploadStatus.failure =
+                            if (changed) R.string.upload_block_changed else R.string.upload_failed_retry
+                        if (changed || result.error is UploadRetryLaterException) stopNew = true
+                    }
+                } catch (e: kotlinx.coroutines.CancellationException) { throw e
                 } catch (e: Exception) {
                     failed = true
+                    UploadMeasurements.failed()
+                    tuner.failed(android.os.SystemClock.elapsedRealtime())
                     UploadStatus.failure = if (e is DestinationChangedException) R.string.upload_block_changed else R.string.upload_failed_retry
-                    Log.w(TAG, "Delivery retained for retry", e)
-                    if (e is UploadRetryLaterException) {
-                        showUploadAlert(ctx)
-                        return Outcome.RETRY
-                    }
-                } finally {
-                    if (plaintext || delivered) exported?.delete()
+                    if (e is DestinationChangedException) stopNew = true
                 }
             }
-            // Pick up parts published during the previous upload, without a WorkManager backoff.
-        } while (true)
+            completions.close()
+        }
         UploadStatus.active = false
         // Calendar requests run in their own worker and never hold the evidence-drain lock.
         if (failed) showUploadAlert(ctx)
         return when {
+            wiped -> Outcome.STOPPED
             failed -> Outcome.RETRY
             more || UploadQueue.listPending(ctx).isNotEmpty() -> Outcome.MORE
             else -> Outcome.COMPLETE
+        }
+    }
+
+    private data class TransferResult(val queued: File, val size: Long, val delivered: Boolean, val error: Exception? = null)
+
+    private suspend fun transfer(ctx: Context, queued: File, target: String, cloud: CloudUploadManager?,
+        preparationLock: Mutex, directoryLock: Mutex, directories: MutableMap<String, DocumentFile>): TransferResult {
+        var exported: File? = null
+        var plaintext = false
+        var delivered = false
+        val size = queued.length()
+        val serviceBackoff = java.util.concurrent.atomic.AtomicBoolean()
+        try {
+            return withContext(DeliveryPolicy.activeDestination.asContextElement(target) +
+                TransferTuning.serviceBackoff.asContextElement(serviceBackoff)) {
+                // Serial preparation bounds disk/crypto pressure; overlaps the other slot's network IO.
+                val policy = preparationLock.withLock {
+                    kotlinx.coroutines.currentCoroutineContext().ensureActive()
+                    check(!com.fieldnotes.recorder.util.PanicWipe.wipeInProgress)
+                    DeliveryPolicy.checkActiveDestination(ctx)
+                    val prepareStarted = android.os.SystemClock.elapsedRealtime()
+                    val bound = DeliveryPolicy.bind(ctx, queued)
+                    plaintext = bound.getString("mode") == "plaintext"
+                    exported = DeliveryPolicy.export(ctx, queued, bound)
+                    UploadMeasurements.add("prepare", android.os.SystemClock.elapsedRealtime() - prepareStarted)
+                    bound
+                }
+                val file = checkNotNull(exported)
+                val subfolder = EvidenceLayout.validate(policy.optString("subfolder", ""))
+                DeliveryPolicy.checkActiveDestination(ctx)
+                delivered = when (Prefs.uploadMethod(ctx)) {
+                    "saf" -> uploadViaSAF(ctx, file, subfolder, directoryLock, directories)
+                    "cloud" -> uploadViaCloud(file, subfolder, cloud)
+                    else -> false
+                }
+                kotlinx.coroutines.currentCoroutineContext().ensureActive()
+                DeliveryPolicy.checkActiveDestination(ctx)
+                if (!delivered && serviceBackoff.get()) throw UploadRetryLaterException()
+                TransferResult(queued, size, delivered)
+            }
+        } catch (e: kotlinx.coroutines.CancellationException) { throw e
+        } catch (e: Exception) {
+            Log.w(TAG, "Delivery retained for retry", e)
+            return TransferResult(queued, size, false, e)
+        } finally {
+            if (plaintext || delivered) exported?.delete()
         }
     }
 
@@ -214,19 +301,34 @@ object UploadDrain {
     }
 
     private suspend fun uploadViaCloud(file: File, subfolder: String,
-        cloud: CloudUploadManager?): Boolean = cloud?.uploadFile(file, subfolder) ?: false
+        cloud: CloudUploadManager?): Boolean {
+        val start = android.os.SystemClock.elapsedRealtime()
+        return try { cloud?.uploadFile(file, subfolder) ?: false }
+        finally { UploadMeasurements.add("cloud", android.os.SystemClock.elapsedRealtime() - start) }
+    }
 
-    private fun uploadViaSAF(ctx: Context, file: File, subfolder: String): Boolean {
+    private suspend fun uploadViaSAF(ctx: Context, file: File, subfolder: String,
+        directoryLock: Mutex, directories: MutableMap<String, DocumentFile>): Boolean {
         val uri = Prefs.cloudFolderUri(ctx)?.let(Uri::parse) ?: return false
         val grant = ctx.contentResolver.persistedUriPermissions.firstOrNull { it.uri == uri }
         if (grant?.isWritePermission != true || !grant.isReadPermission) return false
-        val root = DocumentFile.fromTreeUri(ctx, uri) ?: return false
-        val tree = SafEvidenceFolder.resolve(root, subfolder) ?: return false
+        val directoryStarted = android.os.SystemClock.elapsedRealtime()
+        val tree = try { directoryLock.withLock {
+            DeliveryPolicy.checkActiveDestination(ctx)
+            directories[subfolder] ?: run {
+                val root = DocumentFile.fromTreeUri(ctx, uri) ?: return@withLock null
+                SafEvidenceFolder.resolve(ctx, root, subfolder)?.also { directories[subfolder] = it }
+            }
+        } } finally { UploadMeasurements.add("lookup", android.os.SystemClock.elapsedRealtime() - directoryStarted) } ?: return false
+        val hashStarted = android.os.SystemClock.elapsedRealtime()
         val expected = com.fieldnotes.recorder.integrity.IntegrityManager.sha256File(file)
-        fun matches(doc: DocumentFile): Boolean { return try {
+        UploadMeasurements.add("prepare", android.os.SystemClock.elapsedRealtime() - hashStarted)
+        fun matches(uri: Uri): Boolean {
+            val start = android.os.SystemClock.elapsedRealtime()
+            return try {
             val digest = java.security.MessageDigest.getInstance("SHA-256")
             var bytes = 0L
-            val stream = ctx.contentResolver.openInputStream(doc.uri) ?: return false
+            val stream = ctx.contentResolver.openInputStream(uri) ?: return false
             stream.use { input ->
                 val buffer = ByteArray(65536)
                 while (true) {
@@ -238,27 +340,37 @@ object UploadDrain {
                 }
             }
             bytes == file.length() && java.security.MessageDigest.isEqual(digest.digest(), expected)
-        } catch (_: Exception) { false } }
+        } catch (_: Exception) { false }
+            finally { UploadMeasurements.add("verify", android.os.SystemClock.elapsedRealtime() - start) }
+        }
 
-        var target = tree.findFile(file.name)
-        if (target != null && !target.isFile) return false
+        DeliveryPolicy.checkActiveDestination(ctx)
+        val lookupStarted = android.os.SystemClock.elapsedRealtime()
+        val found = try { SafDocumentLookup.find(ctx, tree.uri, file.name) }
+            finally { UploadMeasurements.add("lookup", android.os.SystemClock.elapsedRealtime() - lookupStarted) }
+        if (found != null && !found.isFile) return false
+        var target = found?.uri
         if (target != null && matches(target)) return true
-        if (target != null && !target.delete()) return false
+        if (target != null && !DocumentsContract.deleteDocument(ctx.contentResolver, target)) return false
         val mime = when (file.extension) {
             "mp4" -> "video/mp4"
             "json" -> "application/json"
             else -> "application/octet-stream"
         }
-        target = tree.createFile(mime, file.name) ?: return false
+        target = DocumentsContract.createDocument(ctx.contentResolver, tree.uri, mime, file.name) ?: return false
         return try {
-            val stream = ctx.contentResolver.openOutputStream(target.uri, "w") ?: return false
-            val copied = stream.use { out -> file.inputStream().use { it.copyTo(out) } }
+            DeliveryPolicy.checkActiveDestination(ctx)
+            val writeStarted = android.os.SystemClock.elapsedRealtime()
+            val copied = try {
+                val stream = ctx.contentResolver.openOutputStream(target, "w") ?: return false
+                stream.use { out -> file.inputStream().use { it.copyTo(out, 65536) } }
+            } finally { UploadMeasurements.add("write", android.os.SystemClock.elapsedRealtime() - writeStarted) }
             if (copied != file.length() || !matches(target)) {
-                target.delete()
+                DocumentsContract.deleteDocument(ctx.contentResolver, target)
                 false
             } else true // Provider-visible bytes verified; not a remote cloud receipt.
         } catch (e: Exception) {
-            target.delete()
+            runCatching { DocumentsContract.deleteDocument(ctx.contentResolver, target) }
             false
         }
     }

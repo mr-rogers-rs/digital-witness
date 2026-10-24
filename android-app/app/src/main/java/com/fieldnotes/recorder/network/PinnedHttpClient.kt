@@ -65,7 +65,13 @@ object PinnedHttpClient {
                 if (!chain.request().url.isHttps) throw java.io.IOException("HTTPS required")
                 chain.proceed(chain.request())
             }
-            .addNetworkInterceptor { chain -> checkPolicy(); chain.proceed(chain.request()) }
+            .addNetworkInterceptor { chain ->
+                checkPolicy()
+                chain.proceed(chain.request()).also { response ->
+                    if (response.code == 429 || response.code in 500..599)
+                        com.fieldnotes.recorder.upload.TransferTuning.serviceBackoff.get()?.set(true)
+                }
+            }
             .followRedirects(false)
             .followSslRedirects(false)
     }

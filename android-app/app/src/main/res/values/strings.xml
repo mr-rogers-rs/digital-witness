@@ -733,7 +733,7 @@ An app password is separate from your login password and can be revoked individu
 
 
     <string name="recovery_running">Recording was interrupted. Recovering saved footage… Please wait.</string>
-    <string name="recovery_failed">Some footage still needs recovery. Tap Retry upload. If this continues, save the available recordings and seek technical help; do not uninstall the app.</string>
+    <string name="recovery_failed">An earlier recording could not be fully recovered. Its data is retained on this phone. You can make a new recording; use Retry uploads to try recovery again.</string>
     <string name="recovery_interrupted">Recording was interrupted. Saved footage has been recovered where possible. The final moments may be missing. Tap Record to start again.</string>
     <string name="capture_storage_low">Not enough free space to record safely. Recording has stopped or cannot start. Free space in other apps; saved footage here is kept.</string>
     <string name="capture_buffer_full">Recording stopped because the phone could not save video quickly enough. Saved footage is kept. Let the phone cool down, then try again.</string>
@@ -751,4 +751,11 @@ An app password is separate from your login password and can be revoked individu
     <string name="battery_setup_open">Set up background operation</string>
     <string name="battery_setup_unavailable">Open the phone settings, find this app, then review its battery and background options.</string>
     <string name="battery_setup_note">Return here after changing the settings. You can continue without changing them, but test recording with the screen locked before relying on it. These options are also available in Settings.</string>
+    <string name="unlock_checking">Checking PIN…</string>
+    <string name="unlock_retry">Unlocking could not finish. Please try again.</string>
+    <string name="recording_saving">Saving recording…</string>
+    <string name="recording_preparing">Preparing recording…</string>
+    <string name="recovery_support_code">Recovery reference: %1$s</string>
+    <string name="upload_measurements_none">No delivery timing results yet.</string>
+    <string name="upload_measurements_report">Last delivery pass (%1$s; up to %2$d transfers)\nVerified: %3$d files; failed: %4$d; %5$.1f MB\nElapsed: %6$.1f s\nPreparation: %7$.1f s; folder lookup: %8$.1f s\nCopy/write: %9$.1f s; read-back verification: %10$.1f s\nDirect cloud API: %11$.1f s; queue commit: %12$.1f s\nStage times are totals across concurrent transfers and can overlap. These results contain no filenames or account details. SAF verification confirms provider-readable bytes, not remote cloud receipt.</string>
 </resources>

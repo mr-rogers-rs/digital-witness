@@ -7,21 +7,29 @@ import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.InputType
 import android.view.Gravity
 import android.view.WindowManager
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.GridLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.fieldnotes.recorder.R
 import com.fieldnotes.recorder.util.PanicWipe
 import com.fieldnotes.recorder.util.Prefs
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Lifecycle
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /**
  * Non-deceptive app lock screen.
@@ -48,8 +56,11 @@ import com.fieldnotes.recorder.util.Prefs
  */
 class LockScreenActivity : AppCompatActivity() {
 
-    private val handler = Handler(Looper.getMainLooper())
+    companion object { private val verificationLock = Mutex() }
     private lateinit var pinDisplay: TextView
+    private lateinit var keypad: GridLayout
+    private lateinit var unlockProgress: LinearLayout
+    private var verifyingPin = false
     private var enteredPin = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,7 +113,20 @@ class LockScreenActivity : AppCompatActivity() {
         }
         col.addView(pinDisplay)
 
-        col.addView(buildKeypad())
+        unlockProgress = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER
+            visibility = View.GONE
+            addView(ProgressBar(this@LockScreenActivity).apply {
+                contentDescription = getString(R.string.unlock_checking)
+            }, LinearLayout.LayoutParams(dp(24), dp(24)))
+            addView(Ui.caption(this@LockScreenActivity, getString(R.string.unlock_checking)).apply {
+                setPadding(dp(10), 0, 0, 0)
+            })
+        }
+        col.addView(unlockProgress)
+        keypad = buildKeypad()
+        col.addView(keypad)
 
         setContentView(scroll)
     }
@@ -177,6 +201,7 @@ class LockScreenActivity : AppCompatActivity() {
     // ── PIN entry ────────────────────────────────────────────────────────────
 
     private fun onPinButton(label: String) {
+        if (verifyingPin) return
         when (label) {
             "C" -> {
                 enteredPin = ""
@@ -198,73 +223,72 @@ class LockScreenActivity : AppCompatActivity() {
     private fun checkPin() {
         // A blank OK (including a second tap after a successful unlock) is not
         // a PIN attempt. Do not hash it or advance the lockout/wipe counter.
-        if (enteredPin.isEmpty()) return
-
-        // Rate limiting: if locked out, reject immediately
-        val remaining = Prefs.unlockLockoutRemaining(this)
-        if (remaining > 0) {
-            enteredPin = ""
-            pinDisplay.text = ""
-            Toast.makeText(this, getString(R.string.lock_wait_seconds, remaining), Toast.LENGTH_LONG).show()
-            return
-        }
-
-        // Check duress code first
-        if (Prefs.isDuressCodeSet(this) && Prefs.verifyDuressCode(this, enteredPin)) {
-            Prefs.resetFailedUnlockAttempts(this)
-            enteredPin = ""
-            pinDisplay.text = ""
-            // Run the wipe to COMPLETION off the UI thread, then open the (now
-            // empty) app. The previous async execute() returned before on-disk
-            // capture artifacts were deleted, so a seizure right after duress
-            // entry could still recover them (security review HIGH). silent =
-            // true because a duress wipe must look like an ordinary unlock.
-            val appCtx = applicationContext
-            Thread {
-                PanicWipe.executeBlocking(appCtx, silent = true)
-                runOnUiThread { startActivity(Intent(this, MainActivity::class.java)) }
-            }.apply { name = "dw-duress-wipe" }.start()
-            return
-        }
-
-        if (Prefs.isUnlockCodeSet(this) && Prefs.verifyUnlockCode(this, enteredPin)) {
-            Prefs.resetFailedUnlockAttempts(this)
-            enteredPin = ""
-            pinDisplay.text = ""
-            com.fieldnotes.recorder.util.SessionLock.markUnlocked()
-            startActivity(Intent(this, MainActivity::class.java))
-            return
-        }
-
-        // Wrong PIN — record failure and check consequences
-        val delay = Prefs.recordFailedUnlockAttempt(this)
+        if (enteredPin.isEmpty() || verifyingPin) return
+        val submitted = enteredPin
         enteredPin = ""
         pinDisplay.text = ""
-
-        when {
-            delay < 0 -> {
-                Toast.makeText(this, getString(R.string.lock_threshold_wiping), Toast.LENGTH_LONG).show()
-                val appCtx = applicationContext
-                handler.postDelayed({
-                    // Wipe to completion off the UI thread before opening the
-                    // empty app, so the deletion isn't racing a seizure
-                    // (security review HIGH).
-                    Thread {
-                        PanicWipe.executeBlocking(appCtx, silent = false)
-                        runOnUiThread { startActivity(Intent(this@LockScreenActivity, MainActivity::class.java)) }
-                    }.apply { name = "dw-lockout-wipe" }.start()
-                }, 1500)
-            }
-            delay > 0 -> {
-                Toast.makeText(this, getString(R.string.lock_incorrect_locked, delay), Toast.LENGTH_LONG).show()
-            }
-            else -> {
-                val attempts = Prefs.unlockFailCount(this)
-                val msg = if (attempts >= 3) getString(R.string.lock_incorrect_count, attempts)
-                          else getString(R.string.lock_incorrect)
-                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-            }
+        setVerifying(true)
+        lifecycleScope.launch {
+            try {
+                // Verification and security side effects finish even if this
+                // activity rotates/closes. Serialize attempts across rotations
+                // so cancellation cannot skip rate limits or a required wipe.
+                val result = withContext(Dispatchers.Default + NonCancellable) {
+                    verificationLock.withLock {
+                        val ctx = applicationContext
+                        val remaining = Prefs.unlockLockoutRemaining(ctx)
+                        when {
+                            remaining > 0 -> PinDecision("locked", remaining)
+                            Prefs.isDuressCodeSet(ctx) && Prefs.verifyDuressCode(ctx, submitted) -> {
+                                Prefs.resetFailedUnlockAttempts(ctx)
+                                PanicWipe.executeBlocking(ctx, silent = true)
+                                PinDecision("wiped")
+                            }
+                            Prefs.isUnlockCodeSet(ctx) && Prefs.verifyUnlockCode(ctx, submitted) -> {
+                                Prefs.resetFailedUnlockAttempts(ctx)
+                                PinDecision("unlocked")
+                            }
+                            else -> {
+                                val delay = Prefs.recordFailedUnlockAttempt(ctx)
+                                if (delay < 0) {
+                                    PanicWipe.executeBlocking(ctx, silent = false)
+                                    PinDecision("wiped")
+                                } else PinDecision("incorrect", delay, Prefs.unlockFailCount(ctx))
+                            }
+                        }
+                    }
+                }
+                if (!lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) return@launch
+                when (result.kind) {
+                    "unlocked", "wiped" -> {
+                        if (result.kind == "unlocked") com.fieldnotes.recorder.util.SessionLock.markUnlocked()
+                        startActivity(Intent(this@LockScreenActivity, MainActivity::class.java))
+                        finish()
+                    }
+                    "locked" -> Toast.makeText(this@LockScreenActivity,
+                        getString(R.string.lock_wait_seconds, result.delay), Toast.LENGTH_LONG).show()
+                    else -> {
+                        val message = when {
+                            result.delay > 0 -> getString(R.string.lock_incorrect_locked, result.delay)
+                            result.attempts >= 3 -> getString(R.string.lock_incorrect_count, result.attempts)
+                            else -> getString(R.string.lock_incorrect)
+                        }
+                        Toast.makeText(this@LockScreenActivity, message, Toast.LENGTH_LONG).show()
+                    }
+                }
+            } catch (cancelled: kotlinx.coroutines.CancellationException) { throw cancelled }
+            catch (_: Exception) {
+                Toast.makeText(this@LockScreenActivity, R.string.unlock_retry, Toast.LENGTH_LONG).show()
+            } finally { setVerifying(false) }
         }
+    }
+
+    private data class PinDecision(val kind: String, val delay: Long = 0, val attempts: Int = 0)
+
+    private fun setVerifying(value: Boolean) {
+        verifyingPin = value
+        unlockProgress.visibility = if (value) View.VISIBLE else View.GONE
+        for (index in 0 until keypad.childCount) keypad.getChildAt(index).isEnabled = !value
     }
 
     private fun showPinSetup() {

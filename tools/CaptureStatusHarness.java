@@ -9,7 +9,13 @@ public class CaptureStatusHarness {
     }
     public static void main(String[] args) {
         expect(CaptureStatus.State.IDLE, 1000, true);
+        if (status.recordingControlEnabled(false, true) || status.recordingControlEnabled(true, false))
+            throw new AssertionError("A new recording bypassed recovery/start gating");
+        if (!status.recordingControlEnabled(false, false))
+            throw new AssertionError("Ready recording cannot start");
         status.start(1000);
+        if (!status.recordingControlEnabled(false, true) || !status.recordingControlEnabled(true, true))
+            throw new AssertionError("Recovery or stale start state disabled Stop during capture");
         expect(CaptureStatus.State.STARTING, 2000, true);
         expect(CaptureStatus.State.STALLED, 11000, true);
         status.setLastAudio(12000);
@@ -22,6 +28,8 @@ public class CaptureStatusHarness {
         expect(CaptureStatus.State.VIDEO_ONLY, 18000, true);
         expect(CaptureStatus.State.STALLED, 18000, false);
         status.setStopping(true);
+        if (status.recordingControlEnabled(false, true))
+            throw new AssertionError("A duplicate Stop remained enabled during sealing");
         expect(CaptureStatus.State.STOPPING, 18000, true);
         status.setRunning(false);
         expect(CaptureStatus.State.IDLE, 18000, true);
@@ -46,6 +54,6 @@ public class CaptureStatusHarness {
         status.start(40000);
         if (status.getTorchAvailable() || status.getTorchEnabled() || status.getTorchProblem() != null)
             throw new AssertionError("New session retained stale torch state");
-        System.out.println("PASS: capture state, silent video, microphone failure, stale video, audio-only and torch reset.");
+        System.out.println("PASS: capture state, Stop remains available during recovery, start/seal gating, silent video, microphone failure, stale video, audio-only and torch reset.");
     }
 }

@@ -36,7 +36,10 @@ class DropboxProvider(private val context: Context) : CloudProvider {
      * Returns the new access token or null on failure.
      * See: https://developers.dropbox.com/oauth-guide#refresh-tokens
      */
-    private fun refreshAccessToken(): String? {
+    @Synchronized
+    private fun refreshAccessToken(staleToken: String? = null): String? {
+        val current = Prefs.cloudAccessToken(context)
+        if (staleToken != null && !current.isNullOrEmpty() && current != staleToken) return current
         val refreshToken = Prefs.cloudRefreshToken(context)
         val appKey = Prefs.cloudAppKey(context)
         if (refreshToken.isNullOrEmpty() || appKey.isNullOrEmpty()) {
@@ -94,7 +97,7 @@ class DropboxProvider(private val context: Context) : CloudProvider {
         // 401 — try refreshing once and retry
         Log.i(TAG, "Got 401, attempting token refresh")
         firstResp.close()
-        val newToken = refreshAccessToken() ?: return null
+        val newToken = refreshAccessToken(token) ?: return null
         return client.newCall(requestBuilder(newToken)).execute()
     }
 

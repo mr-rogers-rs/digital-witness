@@ -20,3 +20,26 @@ Distribution revision 0.4 simplifies individual setup, recommends the Android
 folder picker, offers battery settings before recording, and changes fresh-install
 defaults to evidence mode, playable uploads and ordinary network connections.
 Saved privacy choices and existing queued-file policies are retained.
+
+Distribution revision 0.4.1 retains Stop during recovery, adds a notification
+Stop action and scopes idle-camera callbacks to their own capture sessions.
+PIN verification now runs off the UI thread with visible progress, serialized
+security decisions, and uncancelled rate-limit/wipe side effects. Recording
+controls show state colors and progress independently of upload status queries.
+
+Distribution revision 0.4.2 isolates recovery failures by journal, retains
+unresolved evidence while allowing new independent recordings, and serializes
+recovery and capture ownership. Recovery support codes contain no file/account data.
+
+Distribution revision 0.4.3 adds a bounded two-transfer delivery pipeline with
+single-transfer fallback after failures or sustained throughput loss. Queue
+ownership, folder setup and token refresh are serialized where necessary.
+Recording quality settings, evidence proofs and destination policies are unchanged.
+
+Distribution revision 0.4.4 replaces repeated SAF child-name queries with a
+single projected lookup, retains complete read-back verification, rejects partial
+cloud listings, and stores encrypted numeric-only timing totals for diagnosis.
+
+Distribution revision 0.4.5 expands the camera preview to the screen width,
+preserves its aspect ratio, and keeps recording controls visible while scrolling.
+Recording, encoding and upload behavior are unchanged from revision 0.4.4.

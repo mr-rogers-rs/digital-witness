@@ -111,6 +111,7 @@ class SimplifiedCaptureService : Service() {
      * this lock so they are mutually exclusive.
      */
     private val writerLock = Any()
+    private var recoveryLease: Any? = null
 
     // Audio/Video file writers
     private var audioWriter: FileOutputStream? = null
@@ -138,7 +139,12 @@ class SimplifiedCaptureService : Service() {
     override fun onCreate() {
         super.onCreate()
         Log.i(TAG, "SimplifiedCaptureService onCreate")
-        if (com.fieldnotes.recorder.util.PanicWipe.wipeInProgress || CaptureRecovery.pending) { stopSelf(); return }
+        if (com.fieldnotes.recorder.util.PanicWipe.wipeInProgress) { stopSelf(); return }
+        recoveryLease = CaptureRecovery.tryClaimCapture()
+        if (recoveryLease == null) {
+            CaptureStatus.problem = getString(R.string.recovery_running)
+            stopSelf(); return
+        }
         audioEnabled = Prefs.isAudioEnabled(this)
         videoEnabled = Prefs.isVideoEnabled(this)
         if (!audioEnabled && !videoEnabled) { stopSelf(); return }
@@ -161,8 +167,8 @@ class SimplifiedCaptureService : Service() {
         UploadScheduler.startLiveDrain(this, liveUploadScope)
 
         val anonymous = Prefs.isAnonymousMode(this)
-        // Interrupted journals are recovered before a new user-started session.
-        // Never imply uninterrupted capture by restarting an old chain automatically.
+        // Start an independent chain. Unresolved older journals are retained;
+        // the lease prevents their recovery while this capture owns the writers.
         sessionId = Prefs.beginRecordingSession(this)
         isNewSession = true
         Log.i(TAG, "Capture session started")
@@ -404,6 +410,14 @@ class SimplifiedCaptureService : Service() {
             .setContentIntent(android.app.PendingIntent.getActivity(this, 0,
                 Intent(this, if (Prefs.isCalculatorDisguiseEnabled(this)) com.fieldnotes.recorder.ui.CalculatorActivity::class.java else com.fieldnotes.recorder.ui.LockScreenActivity::class.java),
                 android.app.PendingIntent.FLAG_IMMUTABLE or android.app.PendingIntent.FLAG_UPDATE_CURRENT))
+            .addAction(Notification.Action.Builder(android.R.drawable.ic_media_pause,
+                getString(R.string.action_stop_recording),
+                android.app.PendingIntent.getService(this, 1,
+                    Intent(this, SimplifiedCaptureService::class.java).setAction(ACTION_STOP),
+                    android.app.PendingIntent.FLAG_IMMUTABLE or android.app.PendingIntent.FLAG_UPDATE_CURRENT)
+            ).apply {
+                if (Build.VERSION.SDK_INT >= 31) setAuthenticationRequired(true)
+            }.build())
             .setSmallIcon(android.R.drawable.stat_sys_download)
             .setVisibility(Notification.VISIBILITY_SECRET)
             .setOngoing(true)
@@ -1052,17 +1066,27 @@ class SimplifiedCaptureService : Service() {
         if (!com.fieldnotes.recorder.util.PanicWipe.wipeInProgress) {
             // A service destruction is not necessarily a process death. Join its surviving writers
             // before handing the same journal to recovery in this process.
+            val lease = recoveryLease
+            recoveryLease = null
             CoroutineScope(Dispatchers.IO).launch {
-                captureJob?.join(); uploadJob?.join(); journalJob?.join(); sealJob?.join()
-                if (!com.fieldnotes.recorder.util.PanicWipe.wipeInProgress) {
+                try {
+                    captureJob?.join(); uploadJob?.join(); journalJob?.join(); sealJob?.join()
+                    if (!com.fieldnotes.recorder.util.PanicWipe.wipeInProgress) {
                     if (stopReason == null) runCatching {
                         CaptureDiagnostics.record(this@SimplifiedCaptureService, "service_destroyed", bufferedMediaBytes.get(), CaptureStatus.savedSegments)
                     }
                     runCatching { journal?.flush() }
                     runCatching { Prefs.endRecordingSession(this@SimplifiedCaptureService) }
-                    CaptureRecovery.request(this@SimplifiedCaptureService)
+                    }
+                } finally {
+                    lease?.let { CaptureRecovery.releaseCapture(it) }
+                    if (!com.fieldnotes.recorder.util.PanicWipe.wipeInProgress)
+                        CaptureRecovery.request(this@SimplifiedCaptureService)
                 }
             }
+        } else {
+            recoveryLease?.let { CaptureRecovery.releaseCapture(it) }
+            recoveryLease = null
         }
         try {
             wakeLock?.release()

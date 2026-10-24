@@ -23,6 +23,8 @@ import android.widget.TextView
 import android.widget.Toast
 import android.widget.CheckBox
 import android.widget.FrameLayout
+import android.widget.ProgressBar
+import android.content.res.ColorStateList
 import android.view.Gravity
 import androidx.appcompat.app.AppCompatActivity
 import com.fieldnotes.recorder.R
@@ -47,17 +49,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var content: LinearLayout
+    private lateinit var recordingControls: LinearLayout
     private lateinit var captureText: TextView
     private lateinit var captureDetail: TextView
     private lateinit var uploadText: TextView
     private lateinit var queueText: TextView
     private lateinit var recordButton: Button
+    private lateinit var recordingProgress: ProgressBar
     private lateinit var repairButton: Button
     private lateinit var audioToggle: CheckBox
     private lateinit var flashButton: Button
     private lateinit var lockHint: TextView
     private var cameraPreview: CameraPreviewView? = null
     private var statusJob: Job? = null
+    private var uploadStatusJob: Job? = null
     private var startRequestedAt = 0L
     private var checkingStart = false
     private var recordingTorchRequested = false
@@ -97,7 +102,20 @@ class MainActivity : AppCompatActivity() {
 
         val (scroll, col) = Ui.screen(this)
         content = col
-        setContentView(scroll)
+        // Only the preview spans the screen. Other content keeps its normal inset.
+        content.setPadding(0, dp(12), 0, dp(20))
+        val screen = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setBackgroundColor(Ui.palette(this@MainActivity).bg)
+        }
+        screen.addView(scroll, LinearLayout.LayoutParams(-1, 0, 1f))
+        recordingControls = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setBackgroundColor(Ui.palette(this@MainActivity).surface)
+            setPadding(dp(20), dp(8), dp(20), dp(12))
+        }
+        screen.addView(recordingControls, LinearLayout.LayoutParams(-1, -2))
+        setContentView(screen)
         render()
     }
 
@@ -105,6 +123,7 @@ class MainActivity : AppCompatActivity() {
         cameraPreview?.dispose()
         cameraPreview = null
         content.removeAllViews()
+        recordingControls.removeAllViews()
 
         content.addView(Ui.h1(this, getString(R.string.app_name)))
         content.addView(Ui.caption(this, getString(if (Prefs.isAnonymousMode(this)) R.string.mode_anonymous else R.string.mode_evidence)).apply {
@@ -113,12 +132,14 @@ class MainActivity : AppCompatActivity() {
 
         // ── Recording card ────────────────────────────────────────────────
         val recCard = Ui.card(this)
+        var previewFrame: View? = null
         if (Prefs.isVideoEnabled(this)) {
-            recCard.addView(Ui.sectionLabel(this, getString(R.string.camera_preview)))
-            val frame = FrameLayout(this).apply {
+            content.addView(Ui.sectionLabel(this, getString(R.string.camera_preview)))
+            val frame = CameraPreviewFrame(this).apply {
                 setBackgroundColor(android.graphics.Color.BLACK)
-                layoutParams = LinearLayout.LayoutParams(-1, dp(280))
+                layoutParams = LinearLayout.LayoutParams(-1, -2)
             }
+            previewFrame = frame
             val hint = Ui.caption(this, getString(R.string.preview_starting)).apply {
                 setTextColor(android.graphics.Color.WHITE)
                 setPadding(dp(16), dp(16), dp(16), dp(16))
@@ -127,9 +148,12 @@ class MainActivity : AppCompatActivity() {
             cameraPreview = CameraPreviewView(this, startRequestedAt != 0L) { message ->
                 hint.visibility = if (message == null) View.GONE else View.VISIBLE
                 if (message != null) hint.setText(message)
-            }.also { frame.addView(it, FrameLayout.LayoutParams(-1, -1)) }
+            }.also {
+                it.onAspectRatioChanged = frame::setAspectRatio
+                frame.addView(it, FrameLayout.LayoutParams(-1, -1))
+            }
             frame.addView(hint, FrameLayout.LayoutParams(-1, -1))
-            recCard.addView(frame)
+            content.addView(frame)
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 recCard.addView(Ui.button(this, getString(R.string.preview_allow_camera), Ui.Btn.SECONDARY).apply {
                     setOnClickListener { requestPreviewPermission.launch(Manifest.permission.CAMERA) }
@@ -166,14 +190,23 @@ class MainActivity : AppCompatActivity() {
         recCard.addView(flashButton)
         captureText = Ui.body(this, getString(R.string.capture_checking))
         captureDetail = Ui.caption(this, "")
-        recCard.addView(captureText)
+        recordingControls.addView(captureText)
         recCard.addView(captureDetail)
         recordButton = Ui.button(this, getString(R.string.action_start_recording)).apply {
             setOnClickListener { if (CaptureStatus.running) stopRecording() else onStartPressed() }
         }
-        recCard.addView(recordButton)
+        recordingControls.addView(recordButton)
+        recordingProgress = ProgressBar(this).apply {
+            isIndeterminate = true
+            visibility = View.GONE
+            layoutParams = LinearLayout.LayoutParams(dp(28), dp(28)).apply {
+                gravity = Gravity.CENTER_HORIZONTAL
+                topMargin = dp(8)
+            }
+        }
+        recordingControls.addView(recordingProgress)
         lockHint = Ui.body(this, getString(R.string.capture_lock_phone)).apply { visibility = View.GONE }
-        recCard.addView(lockHint)
+        recordingControls.addView(lockHint)
         content.addView(recCard)
 
         // ── Backup card ───────────────────────────────────────────────────
@@ -207,6 +240,16 @@ class MainActivity : AppCompatActivity() {
         content.addView(Ui.button(this, getString(R.string.action_panic_wipe), Ui.Btn.DANGER).apply {
             setOnClickListener { confirmPanic() }
         })
+        for (i in 0 until content.childCount) {
+            val child = content.getChildAt(i)
+            if (child !== previewFrame) {
+                (child.layoutParams as LinearLayout.LayoutParams).apply {
+                    marginStart = dp(20)
+                    marginEnd = dp(20)
+                }
+            }
+        }
+        updateRecordingControl()
     }
 
     private fun backupDestination(): String? = when {
@@ -225,15 +268,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun onStartPressed() {
         if (checkingStart || startRequestedAt != 0L) return
-        if (com.fieldnotes.recorder.capture.CaptureRecovery.pending) {
-            com.fieldnotes.recorder.capture.CaptureRecovery.request(this)
+        if (com.fieldnotes.recorder.capture.CaptureRecovery.blocksNewRecording()) {
+            Toast.makeText(this, R.string.recovery_running, Toast.LENGTH_LONG).show()
             return
         }
 
         checkingStart = true
         recordingTorchRequested = cameraPreview?.torchEnabled == true
         flashButton.isEnabled = false
-        recordButton.isEnabled = false
+        updateRecordingControl()
         lifecycleScope.launch {
             try {
                 val blocker = withContext(Dispatchers.IO) { UploadReadiness.blocker(this@MainActivity) }
@@ -252,14 +295,14 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this@MainActivity, getString(R.string.upload_status_unknown), Toast.LENGTH_LONG).show()
             } finally {
                 checkingStart = false
-                recordButton.isEnabled = true
+                updateRecordingControl()
             }
         }
     }
 
     private fun requestCapture() {
         banner = null
-        if (com.fieldnotes.recorder.capture.CaptureRecovery.pending) return
+        if (com.fieldnotes.recorder.capture.CaptureRecovery.blocksNewRecording()) return
         if (!com.fieldnotes.recorder.capture.CaptureLimits.canStart(
                 filesDir.usableSpace, com.fieldnotes.recorder.capture.CaptureLimits.reserveBytes(
                     if (Prefs.isVideoEnabled(this)) Prefs.videoTargetKbps(this) else 0,
@@ -304,9 +347,10 @@ class MainActivity : AppCompatActivity() {
         startService(Intent(this, SimplifiedCaptureService::class.java).setAction(SimplifiedCaptureService.ACTION_STOP))
         // Keep showing STOPPING until the service finishes sealing, not IDLE on tap.
         CaptureStatus.stopping = true
+        updateRecordingControl()
     }
 
-    private suspend fun refreshLiveStatus() {
+    private fun refreshCaptureStatus() {
         val now = SystemClock.elapsedRealtime()
         if (CaptureStatus.running) startRequestedAt = 0L
         if (startRequestedAt != 0L && now - startRequestedAt > 10_000) {
@@ -340,16 +384,20 @@ class MainActivity : AppCompatActivity() {
         captureText.setTextColor(if (state == CaptureStatus.State.RECORDING && CaptureStatus.problem == null) p.success else p.warning)
         captureDetail.text = listOfNotNull(banner, CaptureStatus.problem,
             com.fieldnotes.recorder.capture.CaptureRecovery.message()?.let { getString(it) },
+            if (!CaptureStatus.running && com.fieldnotes.recorder.capture.CaptureRecovery.pending)
+                com.fieldnotes.recorder.capture.CaptureRecovery.failureCode?.let { getString(R.string.recovery_support_code, it) } else null,
             if (CaptureStatus.running) CaptureStatus.torchProblem else cameraPreview?.torchProblem?.let { getString(it) },
             if (CaptureStatus.running && Prefs.isVideoEnabled(this)) com.fieldnotes.recorder.capture.RecordingMeasurements.liveText(this) else null,
             if (CaptureStatus.running || CaptureStatus.savedSegments > 0) getString(R.string.capture_saved_segments, CaptureStatus.savedSegments) else null).joinToString("\n")
         captureDetail.visibility = if (captureDetail.text.isEmpty()) View.GONE else View.VISIBLE
         lockHint.visibility = if (state == CaptureStatus.State.RECORDING && CaptureStatus.problem == null) View.VISIBLE else View.GONE
-        recordButton.setText(if (CaptureStatus.running) R.string.action_stop_recording else R.string.action_start_recording)
-        recordButton.isEnabled = !checkingStart && startRequestedAt == 0L && !CaptureStatus.stopping &&
-            !com.fieldnotes.recorder.capture.CaptureRecovery.pending
+        updateRecordingControl()
         audioToggle.isEnabled = !checkingStart && !CaptureStatus.running && startRequestedAt == 0L
         updateFlashButton()
+    }
+
+    private suspend fun refreshUploadStatus() {
+        val p = Ui.palette(this)
         val snapshot = withContext(Dispatchers.IO) {
             Triple(UploadReadiness.blocker(this@MainActivity),
                 UploadQueue.listPending(this@MainActivity).size, UploadQueue.queueSizeBytes(this@MainActivity))
@@ -389,6 +437,35 @@ class MainActivity : AppCompatActivity() {
             (if (recording) CaptureControls.setTorch != null else cameraPreview?.torchReady == true)
     }
 
+    private fun updateRecordingControl() {
+        val running = CaptureStatus.running
+        val starting = !running && (checkingStart || startRequestedAt != 0L)
+        val waitingForRecovery = !running && com.fieldnotes.recorder.capture.CaptureRecovery.blocksNewRecording()
+        val stopping = CaptureStatus.stopping
+        val label = when {
+            stopping -> R.string.recording_saving
+            starting || waitingForRecovery -> R.string.recording_preparing
+            running -> R.string.action_stop_recording
+            else -> R.string.action_start_recording
+        }
+        val text = getString(label)
+        if (recordButton.text.toString() != text) recordButton.text = text
+        recordButton.isEnabled = CaptureStatus.recordingControlEnabled(
+            starting, com.fieldnotes.recorder.capture.CaptureRecovery.blocksNewRecording())
+        val color = when {
+            starting || stopping || waitingForRecovery -> 0xFF8A5A00.toInt()
+            running -> 0xFFB3261E.toInt()
+            !recordButton.isEnabled -> 0xFF666666.toInt()
+            else -> 0xFF1B6E35.toInt()
+        }
+        recordButton.backgroundTintList = ColorStateList.valueOf(color)
+        recordButton.setTextColor(android.graphics.Color.WHITE)
+        val waitingForFrames = running && !stopping && CaptureStatus.state(SystemClock.elapsedRealtime(),
+            CaptureStatus.videoEnabled, CaptureStatus.audioEnabled) == CaptureStatus.State.STARTING
+        recordingProgress.visibility = if (starting || stopping || waitingForFrames || waitingForRecovery) View.VISIBLE else View.GONE
+        recordingProgress.contentDescription = if (waitingForFrames) getString(R.string.capture_starting) else text
+    }
+
     override fun onStart() {
         super.onStart()
         trackForegroundStart()
@@ -403,7 +480,16 @@ class MainActivity : AppCompatActivity() {
         statusJob?.cancel()
         statusJob = lifecycleScope.launch {
             while (isActive) {
-                try { refreshLiveStatus() }
+                try { refreshCaptureStatus() }
+                catch (e: CancellationException) { throw e }
+                catch (_: Exception) { }
+                delay(500)
+            }
+        }
+        uploadStatusJob?.cancel()
+        uploadStatusJob = lifecycleScope.launch {
+            while (isActive) {
+                try { refreshUploadStatus() }
                 catch (e: CancellationException) { throw e }
                 catch (_: Exception) { uploadText.setText(R.string.upload_status_unknown) }
                 delay(2_000)
@@ -413,6 +499,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         statusJob?.cancel()
+        uploadStatusJob?.cancel()
         cameraPreview?.dispose()
         super.onPause()
     }
@@ -426,7 +513,7 @@ class MainActivity : AppCompatActivity() {
         // Permission dialogs can close the idle camera before the service is started.
         CaptureControls.requestedTorch = Prefs.isVideoEnabled(this) && recordingTorchRequested
         startRequestedAt = SystemClock.elapsedRealtime()
-        recordButton.isEnabled = false
+        updateRecordingControl()
         audioToggle.isEnabled = false
         lifecycleScope.launch {
             try {

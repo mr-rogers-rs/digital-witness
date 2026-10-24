@@ -41,7 +41,8 @@ class GoogleDriveProvider(private val context: Context) : CloudProvider {
         .readTimeout(30, TimeUnit.SECONDS)
         .build()
 
-    private var rootFolderId: String? = null
+    @Volatile private var rootFolderId: String? = null
+    private val folderIds = HashMap<List<String>, String>()
 
     /**
      * Returns a live access token, refreshing via the stored refresh token if
@@ -69,7 +70,10 @@ class GoogleDriveProvider(private val context: Context) : CloudProvider {
      * on any failure (no refresh token, no client secret, network error, or
      * Google rejected the refresh — e.g. user revoked consent).
      */
-    private fun refreshAccessToken(): String? {
+    @Synchronized
+    private fun refreshAccessToken(staleToken: String? = null): String? {
+        val current = Prefs.cloudAccessToken(context)
+        if (staleToken != null && !current.isNullOrEmpty() && current != staleToken) return current
         val refreshToken = Prefs.cloudRefreshToken(context) ?: run {
             Log.w(TAG, "Cannot refresh: no refresh token stored")
             return null
@@ -130,7 +134,7 @@ class GoogleDriveProvider(private val context: Context) : CloudProvider {
         val first = block(token)
         if (first !is TokenCallResult.Unauthorized) return first
         // 401 → refresh once, retry once.
-        val refreshed = refreshAccessToken() ?: return TokenCallResult.AuthFailed
+        val refreshed = refreshAccessToken(token) ?: return TokenCallResult.AuthFailed
         return block(refreshed)
     }
 
@@ -300,7 +304,9 @@ class GoogleDriveProvider(private val context: Context) : CloudProvider {
         }
     }
 
+    @Synchronized
     private fun getOrCreateFolder(pathParts: List<String>): String? {
+        folderIds[pathParts]?.let { return it }
         var currentFolderId = "root"
 
         for (folderName in pathParts) {
@@ -314,6 +320,7 @@ class GoogleDriveProvider(private val context: Context) : CloudProvider {
             }
         }
 
+        folderIds[pathParts.toList()] = currentFolderId
         return currentFolderId
     }
 

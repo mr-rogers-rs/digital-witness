@@ -46,6 +46,7 @@ class CameraPreviewView @JvmOverloads constructor(context: Context, recordingPen
     private var idleWidth = 640
     private var idleHeight = 480
     private var decodedPreview = false
+    var onAspectRatioChanged: ((Int, Int) -> Unit)? = null
     private val displayListener = object : android.hardware.display.DisplayManager.DisplayListener {
         override fun onDisplayAdded(displayId: Int) {}
         override fun onDisplayRemoved(displayId: Int) {}
@@ -93,6 +94,7 @@ class CameraPreviewView @JvmOverloads constructor(context: Context, recordingPen
     /** Wait for camera ownership to return before the recording service opens it. */
     suspend fun prepareRecording(): Boolean {
         recordingRequested = true
+        message(R.string.preview_starting)
         closeIdle()
         return withTimeoutOrNull(3_000) { closed.await(); true } == true
     }
@@ -134,20 +136,24 @@ class CameraPreviewView @JvmOverloads constructor(context: Context, recordingPen
         val output = target ?: return
         opening = true
         val previous = lastIdleClosed
-        closed = CompletableDeferred()
-        lastIdleClosed = closed
+        // Every CameraDevice callback owns its own completion. A delayed close
+        // from an older device must not release a newer camera's handoff wait.
+        val completion = CompletableDeferred<Unit>()
+        closed = completion
+        lastIdleClosed = completion
         RecordingPreview.prepareIdle(output) {
-            previous.invokeOnCompletion { handler.post { openIdleAfterRelease() } }
+            previous.invokeOnCompletion { handler.post { openIdleAfterRelease(completion) } }
         }
     }
 
-    private fun openIdleAfterRelease() {
+    private fun openIdleAfterRelease(completion: CompletableDeferred<Unit>) {
+        if (closed !== completion) { completion.complete(Unit); return }
         if (disposed || recordingRequested || CaptureStatus.running || target == null) {
-            opening = false; closed.complete(Unit); return
+            opening = false; completion.complete(Unit); return
         }
         // Permission can change while waiting for a previous view/camera to close.
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            opening = false; closed.complete(Unit); message(R.string.preview_permission); return
+            opening = false; completion.complete(Unit); message(R.string.preview_permission); return
         }
         try {
             decodedPreview = false
@@ -157,8 +163,8 @@ class CameraPreviewView @JvmOverloads constructor(context: Context, recordingPen
             val manager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
             manager.openCamera(CameraUtil.backCameraId(context), object : CameraDevice.StateCallback() {
                 override fun onOpened(device: CameraDevice) {
-                    opening = false
-                    if (disposed || recordingRequested || CaptureStatus.running || target == null) { device.close(); return }
+                    if (closed === completion) opening = false
+                    if (closed !== completion || disposed || recordingRequested || CaptureStatus.running || target == null) { device.close(); return }
                     camera = device
                     val output = target!!
                     device.createCaptureSession(listOf(output), object : CameraCaptureSession.StateCallback() {
@@ -182,26 +188,44 @@ class CameraPreviewView @JvmOverloads constructor(context: Context, recordingPen
                                 CaptureControls.requestedTorch = requestedTorch
                                 torchProblem = null
                                 message(null)
-                            } catch (_: Exception) { message(R.string.preview_unavailable); closeIdle() }
+                            } catch (_: Exception) {
+                                if (idleOwnsView(device, completion)) {
+                                    message(R.string.preview_unavailable)
+                                    closeIdle()
+                                }
+                            }
                         }
                         override fun onConfigureFailed(value: CameraCaptureSession) {
-                            value.close(); message(R.string.preview_unavailable); closeIdle()
+                            value.close()
+                            if (idleOwnsView(device, completion)) {
+                                message(R.string.preview_unavailable)
+                                closeIdle()
+                            }
                         }
                     }, handler)
                 }
-                override fun onClosed(device: CameraDevice) { closed.complete(Unit) }
+                override fun onClosed(device: CameraDevice) { completion.complete(Unit) }
                 override fun onDisconnected(device: CameraDevice) { failed(device) }
                 override fun onError(device: CameraDevice, error: Int) { failed(device) }
                 private fun failed(device: CameraDevice) {
-                    opening = false; device.close()
+                    val showFailure = closed === completion && !disposed && !recordingRequested && !CaptureStatus.running
+                    if (closed === completion) opening = false
+                    device.close()
                     if (camera === device) { camera = null; closeIdle() }
-                    if (!disposed) message(R.string.preview_unavailable)
+                    if (showFailure) message(R.string.preview_unavailable)
                 }
             }, handler)
         } catch (_: Exception) {
-            opening = false; closed.complete(Unit); message(R.string.preview_unavailable)
+            if (closed === completion) {
+                opening = false
+                if (!disposed && !recordingRequested && !CaptureStatus.running) message(R.string.preview_unavailable)
+            }
+            completion.complete(Unit)
         }
     }
+
+    private fun idleOwnsView(device: CameraDevice, completion: CompletableDeferred<Unit>): Boolean =
+        closed === completion && camera === device && !disposed && !recordingRequested && !CaptureStatus.running
 
     private fun closeIdle() {
         previewRequest = null; torchAvailable = false; torchEnabled = false
@@ -221,6 +245,7 @@ class CameraPreviewView @JvmOverloads constructor(context: Context, recordingPen
         val rotated = rotation % 180 != 0
         val sourceWidth = if (rotated) inputHeight else inputWidth
         val sourceHeight = if (rotated) inputWidth else inputHeight
+        onAspectRatioChanged?.invoke(sourceWidth, sourceHeight)
         val scale = minOf(width.toFloat() / sourceWidth, height.toFloat() / sourceHeight)
         val dest = RectF((width - sourceWidth * scale) / 2, (height - sourceHeight * scale) / 2,
             (width + sourceWidth * scale) / 2, (height + sourceHeight * scale) / 2)

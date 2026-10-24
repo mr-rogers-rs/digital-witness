@@ -6,7 +6,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import com.fieldnotes.recorder.util.Prefs
 import java.io.File
-import java.util.UUID
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /**
  * Manager for cloud storage uploads.
@@ -19,6 +20,8 @@ class CloudUploadManager(private val context: Context) {
     }
 
     private var currentProvider: CloudProvider? = null
+    private val folderLock = Mutex()
+    private val preparedFolders = HashSet<String>()
     private fun destinationRoot(): String = if (Prefs.cloudProvider(context) == "nextcloud")
         Prefs.ncFolder(context) else Prefs.cloudFolderPath(context)
 
@@ -54,6 +57,7 @@ class CloudUploadManager(private val context: Context) {
             // Ensure destination folder exists
             val folderPath = destinationRoot()
             val folderCreated = folderPath.trim('/').isEmpty() || currentProvider?.createFolder(folderPath) == true
+            if (folderCreated) preparedFolders.add(folderPath)
 
             if (!folderCreated) {
                 Log.w(TAG, "Failed to create/verify folder: $folderPath")
@@ -102,7 +106,11 @@ class CloudUploadManager(private val context: Context) {
             // original session/timestamp-based name which leaks timing info.
             val obfuscatedName = file.name // queue names are random and stable across retries
             val folderPath = com.fieldnotes.recorder.upload.EvidenceLayout.path(destinationRoot(), subfolder)
-            if (subfolder.isNotEmpty() && currentProvider?.createFolder(folderPath) != true) return@withContext false
+            if (subfolder.isNotEmpty() && !folderLock.withLock {
+                    com.fieldnotes.recorder.upload.DeliveryPolicy.checkActiveDestination(context)
+                    if (folderPath in preparedFolders) true
+                    else (currentProvider?.createFolder(folderPath) == true).also { if (it) preparedFolders.add(folderPath) }
+                }) return@withContext false
             val remotePath = "$folderPath/$obfuscatedName"
 
             // Log only size + the UUID (UUID is random per upload; safe).
